@@ -1,0 +1,24 @@
+{
+  "paths": {
+    "MAPS_FOLDER": "/assets/worlds/",
+    "SPRITESHEETS_FOLDER": "/assets/worlds/spritesheets/",
+    "MUSICS_FOLDER": "/assets/musics/"
+  },
+  "common": {
+    "title": "MMORPG",
+    "gamescreen": {
+      "width": 800,
+      "height": 600
+    }
+  },
+  "start": {
+    "world": "/assets/worlds/world-1.world",
+    "position": {
+      "x": 200,
+      "y": 200
+    }
+  },
+  "dev": {
+    "debug": true
+  }
+}
