@@ -1,6 +1,13 @@
 import SpriteSheet from "../view/SpriteSheet";
 import Config from "../config.json";
 
+enum Direction {
+  Up = "up",
+  Down = "down",
+  Left = "left",
+  Right = "right",
+}
+
 /**
  * The `Character` class represents a game character with position, size, and animation details.
  * It handles movement, rendering, and collision box calculations.
@@ -12,7 +19,7 @@ export default class Character {
   private width: number;
   private height: number;
   private spriteSheet: SpriteSheet;
-  private direction: string = "down";
+  private direction: Direction;
 
   /**
    * Creates a new `Character` instance.
@@ -39,7 +46,7 @@ export default class Character {
     spriteSheetTileHeight: number,
     spriteSheetTileCount: number = 12,
     spriteSheetColumns: number = 3,
-    direction: string = "down"
+    direction = Direction.Down
   ) {
     this.name = name;
     this.x = x;
@@ -73,10 +80,10 @@ export default class Character {
     this.x += dx;
     this.y += dy;
 
-    if (dx > 0) this.direction = "right";
-    if (dx < 0) this.direction = "left";
-    if (dy > 0) this.direction = "down";
-    if (dy < 0) this.direction = "up";
+    if (dx > 0) this.direction = Direction.Right;
+    if (dx < 0) this.direction = Direction.Left;
+    if (dy > 0) this.direction = Direction.Down;
+    if (dy < 0) this.direction = Direction.Up;
   }
 
   /**
@@ -232,7 +239,7 @@ export default class Character {
    * Sets the character's direction.
    * @param direction - The new direction for the character.
    */
-  public setDirection(direction: string) {
+  public setDirection(direction: Direction) {
     this.direction = direction;
   }
 }

@@ -29,7 +29,7 @@ class SpriteSheet {
   /**
    * Loads the sprite sheet image from the file path.
    */
-  async load(): Promise<void> {
+  public async load(): Promise<void> {
     if (this.image || !this.filePath) return;
 
     const image = new Image();
@@ -50,18 +50,11 @@ class SpriteSheet {
   }
 
   /**
-   * Retrieves the total number of tiles in the sprite sheet.
-   */
-  getTileCount(): number {
-    return this.tileCount;
-  }
-
-  /**
    * Retrieves the coordinates of a tile in the sprite sheet.
    * @param tileIndex The index of the tile (0-based).
    * @returns An object containing the x and y coordinates.
    */
-  getTileCoordinates(tileIndex: number): { x: number; y: number } {
+  public getTileCoordinates(tileIndex: number): { x: number; y: number } {
     if (!this.image) {
       throw new Error(`Sprite sheet ${this.filePath} is not loaded.`);
     }
@@ -73,11 +66,22 @@ class SpriteSheet {
   }
 
   /**
+   * Retrieves a tile as a canvas element by its position in the sprite sheet.
+   * @param col The column of the tile (0-based).
+   * @param row The row of the tile (0-based).
+   * @returns A canvas containing the requested tile.
+   */
+  public getTileByPosition(col: number, row: number): HTMLCanvasElement {
+    const tileIndex = row * this.columns + col;
+    return this.getTile(tileIndex);
+  }
+
+  /**
    * Retrieves a tile as a canvas element.
    * @param tileIndex The index of the tile (0-based).
    * @returns A canvas containing the requested tile.
    */
-  getTile(tileIndex: number): HTMLCanvasElement {
+  public getTile(tileIndex: number): HTMLCanvasElement {
     const { x, y } = this.getTileCoordinates(tileIndex);
 
     const canvas = document.createElement("canvas");
@@ -113,7 +117,7 @@ class SpriteSheet {
    * @param destX The x-coordinate to draw the tile at.
    * @param destY The y-coordinate to draw the tile at.
    */
-  drawTile(
+  public drawTile(
     context: CanvasRenderingContext2D,
     tileIndex: number,
     destX: number,
@@ -142,9 +146,17 @@ class SpriteSheet {
    * Checks whether the sprite sheet image has been loaded.
    * @returns Whether the sprite sheet image has been loaded.
    */
-  isLoaded(): boolean {
+  public isLoaded(): boolean {
     return this.image !== null;
   }
+
+  /**
+   * Retrieves the total number of tiles in the sprite sheet.
+   */
+  public getTileCount(): number {
+    return this.tileCount;
+  }
+
   public getTileWidth(): number {
     return this.tileWidth;
   }
