@@ -8,28 +8,35 @@ enum Direction {
   Up = "up",
 }
 
+interface AnimationFrames {
+  down: number[];
+  left: number[];
+  right: number[];
+  up: number[];
+}
+
 /**
  * The `Character` class represents a game character with position, size, and animation details.
  * It handles movement, rendering, and collision box calculations.
  */
 export default class Character {
-  private static readonly MOVE_SPEED = 2;
-  private static readonly SPRITE_SHEET_TILE_COUNT = 12;
-  private static readonly SPRITE_SHEET_COLUMNS = 3;
-  private static readonly ANIMATION_FRAMES = {
+  private static readonly CHARACTER_MOVE_SPEED = 2;
+  private static readonly CHARACTER_SPRITE_SHEET_COLUMNS = 3;
+  private static readonly CHARACTER_ANIMATION_FRAMES = {
     down: [0, 1, 2],
     left: [3, 4, 5],
     right: [6, 7, 8],
     up: [9, 10, 11],
   };
-  private static readonly FRAME_INTERVAL = 100;
+  private static readonly CHARACTER_INACTIVE_FRAME_INDEX = 0; // Index of the inactive frame in a row of the sprite sheet.
+  private static readonly CHARACTER_FRAME_INTERVAL = 100;
 
   protected spriteSheet: SpriteSheet;
-  protected moveSpeed: number = Character.MOVE_SPEED;
+  protected moveSpeed: number = Character.CHARACTER_MOVE_SPEED;
   protected walking: boolean = false;
-  protected currentFrame = 1;
+  protected currentFrameIndex: number = 0;
   protected lastFrameTime: number = 0; // Temps de la dernière mise à jour en ms
-  protected frameInterval: number = Character.FRAME_INTERVAL; // Intervalle minimum entre frames en ms
+  protected frameInterval: number = Character.CHARACTER_FRAME_INTERVAL; // Intervalle minimum entre frames en ms
 
   /**
    * Creates a new `Character` instance.
@@ -41,9 +48,9 @@ export default class Character {
    * @param spriteSheetFilePath - Path to the sprite sheet image.
    * @param spriteSheetTileWidth - Width of each tile in the sprite sheet.
    * @param spriteSheetTileHeight - Height of each tile in the sprite sheet.
-   * @param spriteSheetTileCount - Total number of tiles in the sprite sheet (default: 12).
-   * @param spriteSheetColumns - Number of columns in the sprite sheet (default: 3).
-   * @param direction - The initial direction the character is facing (default: "down").
+   * @param animationFrames - Animation frames for the character.
+   * @param idleFrameIndex - Index of the inactive frame in a row of the sprite sheet.
+   * @param direction - The initial direction of the character.
    */
   constructor(
     protected name: string,
@@ -54,17 +61,26 @@ export default class Character {
     protected spriteSheetFilePath: string,
     protected spriteSheetTileWidth: number,
     protected spriteSheetTileHeight: number,
-    protected spriteSheetTileCount: number = Character.SPRITE_SHEET_TILE_COUNT,
-    protected spriteSheetColumns: number = Character.SPRITE_SHEET_COLUMNS,
-    protected animationFrames = Character.ANIMATION_FRAMES,
+    protected animationFrames: AnimationFrames = Character.CHARACTER_ANIMATION_FRAMES,
+    protected idleFrameIndex = Character.CHARACTER_INACTIVE_FRAME_INDEX,
     protected direction = Direction.Down
   ) {
+    if (
+      !this.animationFrames["down"] ||
+      !this.animationFrames["up"] ||
+      !this.animationFrames["left"] ||
+      !this.animationFrames["right"]
+    ) {
+      throw new Error(`Invalid animation frames for character ${this.name}.`);
+    }
+
+    let spritesheetColumn = this.animationFrames[direction].length;
     this.spriteSheet = new SpriteSheet(
       spriteSheetFilePath,
       spriteSheetTileWidth,
       spriteSheetTileHeight,
-      spriteSheetTileCount,
-      spriteSheetColumns
+      spritesheetColumn * 4, // 4 directions
+      spritesheetColumn
     );
   }
 
@@ -83,9 +99,13 @@ export default class Character {
     if (this.walking) {
       // Vérifie si suffisamment de temps s'est écoulé depuis la dernière mise à jour
       if (currentTime - this.lastFrameTime >= this.frameInterval) {
-        this.currentFrame = (this.currentFrame + 1) % 3;
+        this.currentFrameIndex =
+          (this.currentFrameIndex + 1) %
+          Character.CHARACTER_SPRITE_SHEET_COLUMNS;
         this.lastFrameTime = currentTime; // Met à jour le dernier temps
       }
+    } else {
+      this.currentFrameIndex = this.idleFrameIndex;
     }
   }
 
@@ -203,7 +223,8 @@ export default class Character {
    * @returns The canvas element containing the current animation frame.
    */
   public getAnimationFrame() {
-    const tileIndex = this.animationFrames[this.direction][this.currentFrame];
+    const tileIndex =
+      this.animationFrames[this.direction][this.currentFrameIndex];
     return this.spriteSheet.getTile(tileIndex);
   }
 

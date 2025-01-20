@@ -5,14 +5,13 @@ export default class Hero extends Character {
   private static readonly HERO_HEIGHT = 48;
   private static readonly HERO_SPRITE_SHEET_TILE_WIDTH = 32;
   private static readonly HERO_SPRITE_SHEET_TILE_HEIGHT = 48;
-  private static readonly HERO_SPRITE_SHEET_TILE_COUNT = 12;
-  private static readonly HERO_SPRITE_SHEET_COLUMNS = 3;
   private static readonly HERO_ANIMATION_FRAMES = {
     down: [0, 1, 2],
     left: [3, 4, 5],
     right: [6, 7, 8],
     up: [9, 10, 11],
   };
+  private static readonly HERO_INACTIVE_FRAME_INDEX = 1; // Index of the inactive frame
 
   private level: number = 1;
   private experience: number = 0;
@@ -45,9 +44,8 @@ export default class Hero extends Character {
       spriteSheetFilePath,
       Hero.HERO_SPRITE_SHEET_TILE_WIDTH,
       Hero.HERO_SPRITE_SHEET_TILE_HEIGHT,
-      Hero.HERO_SPRITE_SHEET_TILE_COUNT,
-      Hero.HERO_SPRITE_SHEET_COLUMNS,
-      Hero.HERO_ANIMATION_FRAMES
+      Hero.HERO_ANIMATION_FRAMES,
+      Hero.HERO_INACTIVE_FRAME_INDEX
     );
   }
 
