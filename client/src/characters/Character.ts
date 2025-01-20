@@ -20,23 +20,23 @@ interface AnimationFrames {
  * It handles movement, rendering, and collision box calculations.
  */
 export default class Character {
-  private static readonly CHARACTER_MOVE_SPEED = 2;
-  private static readonly CHARACTER_SPRITE_SHEET_COLUMNS = 3;
-  private static readonly CHARACTER_ANIMATION_FRAMES = {
+  private static readonly DEFAULT_MOVE_SPEED = 2;
+  private static readonly DEFAULT_SPRITE_SHEET_COLUMNS = 3;
+  private static readonly DEFAULT_ANIMATION_FRAMES = {
     down: [0, 1, 2],
     left: [3, 4, 5],
     right: [6, 7, 8],
     up: [9, 10, 11],
   };
-  private static readonly CHARACTER_INACTIVE_FRAME_INDEX = 0; // Index of the inactive frame in a row of the sprite sheet.
-  private static readonly CHARACTER_FRAME_INTERVAL = 100;
+  private static readonly DEFAULT_INACTIVE_FRAME_INDEX = 0; // Index of the inactive frame in a row of the sprite sheet.
+  private static readonly DEFAULT_FRAME_INTERVAL = 100;
 
   protected spriteSheet: SpriteSheet;
-  protected moveSpeed: number = Character.CHARACTER_MOVE_SPEED;
+  protected moveSpeed: number = Character.DEFAULT_MOVE_SPEED;
   protected walking: boolean = false;
   protected currentFrameIndex: number = 0;
   protected lastFrameTime: number = 0; // Temps de la dernière mise à jour en ms
-  protected frameInterval: number = Character.CHARACTER_FRAME_INTERVAL; // Intervalle minimum entre frames en ms
+  protected frameInterval: number = Character.DEFAULT_FRAME_INTERVAL; // Intervalle minimum entre frames en ms
 
   /**
    * Creates a new `Character` instance.
@@ -61,8 +61,8 @@ export default class Character {
     protected spriteSheetFilePath: string,
     protected spriteSheetTileWidth: number,
     protected spriteSheetTileHeight: number,
-    protected animationFrames: AnimationFrames = Character.CHARACTER_ANIMATION_FRAMES,
-    protected idleFrameIndex = Character.CHARACTER_INACTIVE_FRAME_INDEX,
+    protected animationFrames: AnimationFrames = Character.DEFAULT_ANIMATION_FRAMES,
+    protected idleFrameIndex = Character.DEFAULT_INACTIVE_FRAME_INDEX,
     protected direction = Direction.Down
   ) {
     if (
@@ -100,8 +100,7 @@ export default class Character {
       // Vérifie si suffisamment de temps s'est écoulé depuis la dernière mise à jour
       if (currentTime - this.lastFrameTime >= this.frameInterval) {
         this.currentFrameIndex =
-          (this.currentFrameIndex + 1) %
-          Character.CHARACTER_SPRITE_SHEET_COLUMNS;
+          (this.currentFrameIndex + 1) % Character.DEFAULT_SPRITE_SHEET_COLUMNS;
         this.lastFrameTime = currentTime; // Met à jour le dernier temps
       }
     } else {
