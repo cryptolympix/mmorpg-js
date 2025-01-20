@@ -42,36 +42,43 @@ export default class TileSet {
         throw new Error(`Failed to fetch tileset file: ${response.statusText}`);
       }
 
-      // Parse the tileset file
+      // ----------------- Parse the tileset file -----------------
+
       const tsxContent = await response.text();
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(tsxContent, "text/xml");
       const tileset = xmlDoc.querySelector("tileset");
+
       if (!tileset) {
         throw new Error(
           `Invalid tileset file: ${this.filePath} missing <tileset> tag.`
         );
       }
 
-      // Parse the image file path
+      // ----------------- Parse the image file path -----------------
+
       const image = tileset.querySelector("image");
+
       if (!image) {
         throw new Error(
           `Invalid tileset file: ${this.filePath} missing <image> tag.`
         );
       }
+
       const imageFilepath = (
         Config.paths.SPRITESHEETS_FOLDER + image.getAttribute("source")!
       )
         .replace(/\.\//g, "/")
         .replace(/\/\//g, "/");
+
       if (!imageFilepath) {
         throw new Error(
           `Invalid tileset file: ${this.filePath} missing image source.`
         );
       }
 
-      // Parse tileset attributes
+      // ----------------- Parse tileset attributes -----------------
+
       const tileWidth = parseInt(tileset.getAttribute("tilewidth") || "0", 10);
       const tileHeight = parseInt(
         tileset.getAttribute("tileheight") || "0",
@@ -79,13 +86,15 @@ export default class TileSet {
       );
       const tileCount = parseInt(tileset.getAttribute("tilecount") || "0", 10);
       const columns = parseInt(tileset.getAttribute("columns") || "0", 10);
+
       if (!tileWidth || !tileHeight || !tileCount || !columns) {
         throw new Error(
           `Invalid tileset file: ${this.filePath} missing tileset required attributes.`
         );
       }
 
-      // Load the sprite sheet
+      // ----------------- Load the sprite sheet -----------------
+
       this.spriteSheet = new SpriteSheet(
         imageFilepath,
         tileWidth,
@@ -93,13 +102,19 @@ export default class TileSet {
         tileCount,
         columns
       );
+
       await this.spriteSheet.load();
 
-      // Parse the tiles
+      // ----------------- Parse the tiles -----------------
+
       const tiles = Array.from(tileset.querySelectorAll("tile"));
+
       for (const t of tiles) {
         const id = parseInt(t.getAttribute("id") || "0", 10) + this.firstGid;
+
         if (!id) continue;
+
+        // Parse the property of the tile
         const properties = Array.from(t.querySelectorAll("property")).map(
           (p) => ({
             name: p.getAttribute("name") || "",

@@ -12,13 +12,9 @@
     }
   },
   "start": {
-    "world": "/assets/worlds/world-1.world",
-    "position": {
-      "x": 200,
-      "y": 200
-    }
+    "world": "/assets/worlds/world-1.world"
   },
   "dev": {
-    "debug": true
+    "debug": false
   }
 }

@@ -31,50 +31,77 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentWorld, setCurrentWorld] = useState<World | null>(null);
   const [currentMap, setCurrentMap] = useState<Map | null>(null);
 
-  const loadHero = async () => {
-    const hero = new Hero(
-      "Player",
-      Config.start.position.x,
-      Config.start.position.y,
-      30,
-      50,
-      "/assets/characters/heroes/knight_m.png",
-      30,
-      40
-    );
-    await hero.load();
-    setPlayerHero(hero);
-  };
-
-  const loadCurrentWorld = async () => {
+  const loadInitialWorld = async () => {
     const world = new World(Config.start.world);
     await world.load();
     setCurrentWorld(world);
   };
 
-  const loadCurrentMap = async () => {
-    if (playerHero && currentWorld) {
-      const map = currentWorld.getMapByPosition(
-        playerHero.getX(),
-        playerHero.getY()
-      );
-      if (map) setCurrentMap(map);
+  const loadInitialMap = async () => {
+    if (!currentWorld) return;
+
+    // Search the map where the start object is located
+    for (const map of currentWorld.getMaps()) {
+      if (
+        map
+          .getObjectGroups()
+          .some((o) => o.getObjectByName("Start") !== undefined)
+      ) {
+        setCurrentMap(map);
+        break;
+      }
     }
   };
 
-  // Load the hero and the current world
+  const loadHero = async () => {
+    if (!currentWorld || !currentMap) return;
+
+    // Do not load the hero if it already exists
+    if (playerHero) return;
+
+    const objectGroup = currentMap
+      .getObjectGroups()
+      .find((o) => o.getObjectByName("Start") !== undefined);
+
+    if (!objectGroup) {
+      throw new Error("Start object not found in map");
+    }
+
+    const startObject = objectGroup.getObjectByName("Start");
+
+    const hero = new Hero(
+      "Player",
+      startObject.getX(),
+      startObject.getY(),
+      "/assets/characters/heroes/knight_m.png"
+    );
+    await hero.load();
+    setPlayerHero(hero);
+  };
+
+  // Load the current world
   useEffect(() => {
     const load = async () => {
-      await loadHero();
-      await loadCurrentWorld();
+      await loadInitialWorld();
     };
     load();
   }, []);
 
-  // Load the current map when the player hero or the current world changes
+  // Load the current map
   useEffect(() => {
-    loadCurrentMap();
-  }, [playerHero, currentWorld]);
+    const load = async () => {
+      await loadInitialMap();
+    };
+    load();
+  }, [currentWorld]);
+
+  // Load the player hero
+  useEffect(() => {
+    const load = async () => {
+      await loadHero();
+    };
+    load();
+  }, [currentMap, currentWorld]);
 
   const updatePlayerHero = (playerHero: Hero) => {
     setPlayerHero(playerHero);

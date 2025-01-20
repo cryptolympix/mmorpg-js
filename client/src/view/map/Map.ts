@@ -3,6 +3,8 @@ import Tile from "./Tile";
 import TileSet from "./TileSet";
 import TileLayer from "./TileLayer";
 import SpriteSheet from "../SpriteSheet";
+import Object from "./Object";
+import ObjectGroup from "./ObjectGroup";
 import Character from "../../characters/Character";
 
 /**
@@ -13,6 +15,7 @@ export default class Map {
   private filePath: string = ""; // Path to the TMX file
   private tileSets: TileSet[] = []; // Tilesets used in the map
   private tileLayers: TileLayer[] = []; // Tile layers of the map
+  private objectGroup: ObjectGroup[] = []; // Object groups in the map
   private x: number = 0; // X-coordinate of the map in the world
   private y: number = 0; // Y-coordinate of the map in the world
   private widthInTiles: number = 0; // Map dimensions in tiles
@@ -71,7 +74,8 @@ export default class Map {
     this.widthInTiles = parseInt(mapWidth, 10);
     this.heightInTiles = parseInt(mapHeight, 10);
 
-    // Parse tilesets
+    // ----------------- Parse tilesets -----------------
+
     const tilesets = Array.from(xmlDoc.querySelectorAll("tileset"));
     for (const t of tilesets) {
       const firstGid = parseInt(t.getAttribute("firstgid") || "0", 10);
@@ -82,7 +86,8 @@ export default class Map {
       this.tileSets.push(tileset);
     }
 
-    // Parse layers and create tiles
+    // ----------------- Parse layers and create tiles -----------------
+
     const layers = Array.from(xmlDoc.querySelectorAll("layer"));
     for (let l = 0; l < layers.length; l++) {
       const layerId = layers[l].getAttribute("id");
@@ -114,6 +119,38 @@ export default class Map {
       }
 
       this.tileLayers[l] = tileLayer;
+    }
+
+    // ----------------- Parse map objects -----------------
+
+    const objectGroups = Array.from(xmlDoc.querySelectorAll("objectgroup"));
+
+    for (let og of objectGroups) {
+      const objectGroup = new ObjectGroup(
+        og.getAttribute("id") || "",
+        og.getAttribute("name") || ""
+      );
+
+      const objects = Array.from(og.querySelectorAll("object"));
+      for (let obj of objects) {
+        const id = obj.getAttribute("id") || "";
+        const name = obj.getAttribute("name") || "";
+        const x = parseInt(obj.getAttribute("x") || "0", 10);
+        const y = parseInt(obj.getAttribute("y") || "0", 10);
+
+        // Parse the property of object
+        const properties = Array.from(obj.querySelectorAll("property")).map(
+          (p) => ({
+            name: p.getAttribute("name") || "",
+            value: p.getAttribute("value") || "",
+            type: p.getAttribute("type") || "",
+          })
+        );
+
+        objectGroup.addObject(new Object(id, name, x, y, properties));
+      }
+
+      this.objectGroup.push(objectGroup);
     }
 
     if (Config.dev.debug) {
@@ -399,5 +436,31 @@ export default class Map {
    */
   public getHeightInPixels(): number {
     return this.heightPixels;
+  }
+
+  /**
+   * Get all object groups in the map.
+   * @returns An array of ObjectGroup objects.
+   */
+  public getObjectGroups(): ObjectGroup[] {
+    return this.objectGroup;
+  }
+
+  /**
+   * Get an object group by its name.
+   * @param name - The name of the object group.
+   * @returns The ObjectGroup instance with the given name.
+   */
+  public getObjectGroupByName(name: string): ObjectGroup | undefined {
+    return this.objectGroup.find((og) => og.getName() === name);
+  }
+
+  /**
+   * Get an object group by its ID.
+   * @param id - The ID of the object group.
+   * @returns The ObjectGroup instance with the given ID.
+   */
+  public getObjectGroupById(id: string): ObjectGroup | undefined {
+    return this.objectGroup.find((og) => og.getId() === id);
   }
 }

@@ -2,10 +2,10 @@ import SpriteSheet from "../view/SpriteSheet";
 import Config from "../config.json";
 
 enum Direction {
-  Up = "up",
   Down = "down",
   Left = "left",
   Right = "right",
+  Up = "up",
 }
 
 /**
@@ -13,13 +13,23 @@ enum Direction {
  * It handles movement, rendering, and collision box calculations.
  */
 export default class Character {
-  private name: string;
-  private x: number;
-  private y: number;
-  private width: number;
-  private height: number;
-  private spriteSheet: SpriteSheet;
-  private direction: Direction;
+  private static readonly MOVE_SPEED = 5;
+  private static readonly SPRITE_SHEET_TILE_COUNT = 12;
+  private static readonly SPRITE_SHEET_COLUMNS = 3;
+  private static readonly ANIMATION_FRAMES = {
+    down: [0, 1, 2],
+    left: [3, 4, 5],
+    right: [6, 7, 8],
+    up: [9, 10, 11],
+  };
+  private static readonly FRAME_INTERVAL = 100;
+
+  protected spriteSheet: SpriteSheet;
+  protected moveSpeed: number = Character.MOVE_SPEED;
+  protected walking: boolean = false;
+  protected currentFrame = 1;
+  protected lastFrameTime: number = 0; // Temps de la dernière mise à jour en ms
+  protected frameInterval: number = Character.FRAME_INTERVAL; // Intervalle minimum entre frames en ms
 
   /**
    * Creates a new `Character` instance.
@@ -36,23 +46,19 @@ export default class Character {
    * @param direction - The initial direction the character is facing (default: "down").
    */
   constructor(
-    name: string,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    spriteSheetFilePath: string,
-    spriteSheetTileWidth: number,
-    spriteSheetTileHeight: number,
-    spriteSheetTileCount: number = 12,
-    spriteSheetColumns: number = 3,
-    direction = Direction.Down
+    protected name: string,
+    protected x: number,
+    protected y: number,
+    protected width: number,
+    protected height: number,
+    protected spriteSheetFilePath: string,
+    protected spriteSheetTileWidth: number,
+    protected spriteSheetTileHeight: number,
+    protected spriteSheetTileCount: number = Character.SPRITE_SHEET_TILE_COUNT,
+    protected spriteSheetColumns: number = Character.SPRITE_SHEET_COLUMNS,
+    protected animationFrames = Character.ANIMATION_FRAMES,
+    protected direction = Direction.Down
   ) {
-    this.name = name;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
     this.spriteSheet = new SpriteSheet(
       spriteSheetFilePath,
       spriteSheetTileWidth,
@@ -60,7 +66,6 @@ export default class Character {
       spriteSheetTileCount,
       spriteSheetColumns
     );
-    this.direction = direction;
   }
 
   /**
@@ -68,6 +73,20 @@ export default class Character {
    */
   public async load() {
     await this.spriteSheet.load();
+  }
+
+  /**
+   * Updates the character's animation frame.
+   * Advances the current frame index if the character is walking and the frame interval has elapsed.
+   */
+  public updateFrame(currentTime: number) {
+    if (this.walking) {
+      // Vérifie si suffisamment de temps s'est écoulé depuis la dernière mise à jour
+      if (currentTime - this.lastFrameTime >= this.frameInterval) {
+        this.currentFrame = (this.currentFrame + 1) % 3;
+        this.lastFrameTime = currentTime; // Met à jour le dernier temps
+      }
+    }
   }
 
   /**
@@ -98,12 +117,19 @@ export default class Character {
     cameraOffsetX: number,
     cameraOffsetY: number
   ) {
-    context.fillStyle = "red";
-    context.fillRect(
+    // context.fillStyle = "red";
+    // context.fillRect(
+    //   this.x - this.width / 2 + cameraOffsetX,
+    //   this.y - this.height + cameraOffsetY,
+    //   this.width,
+    //   this.height
+    // );
+
+    // Draw the character's current animation frame
+    context.drawImage(
+      this.getAnimationFrame(),
       this.x - this.width / 2 + cameraOffsetX,
-      this.y - this.height + cameraOffsetY,
-      this.width,
-      this.height
+      this.y - this.height + cameraOffsetY
     );
 
     if (Config.dev.debug) {
@@ -130,6 +156,7 @@ export default class Character {
       6,
       6
     );
+    context.font = "12px Avenir";
     context.fillText(
       `(${this.x}, ${this.y})`,
       this.x + cameraOffsetX,
@@ -169,6 +196,15 @@ export default class Character {
     const top = this.y - this.height / 3;
     const bottom = this.y;
     return { left, right, top, bottom };
+  }
+
+  /**
+   * Gets the current animation frame for the character.
+   * @returns The canvas element containing the current animation frame.
+   */
+  public getAnimationFrame() {
+    const tileIndex = this.animationFrames[this.direction][this.currentFrame];
+    return this.spriteSheet.getTile(tileIndex);
   }
 
   /**
@@ -241,5 +277,37 @@ export default class Character {
    */
   public setDirection(direction: Direction) {
     this.direction = direction;
+  }
+
+  /**
+   * Sets the character's walking state.
+   * @param walking - Whether the character is walking.
+   */
+  public setWalking(walking: boolean) {
+    this.walking = walking;
+  }
+
+  /**
+   * Checks if the character is walking.
+   * @returns True if the character is walking, otherwise false.
+   */
+  public isWalking() {
+    return this.walking;
+  }
+
+  /**
+   * Gets the character's movement speed.
+   * @returns The movement speed of the character.
+   */
+  public getMoveSpeed() {
+    return this.moveSpeed;
+  }
+
+  /**
+   * Sets the character's movement speed.
+   * @param moveSpeed - The new movement speed for the character.
+   */
+  public setMoveSpeed(moveSpeed: number) {
+    this.moveSpeed = moveSpeed;
   }
 }
