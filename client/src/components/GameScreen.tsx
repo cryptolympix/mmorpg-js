@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import "./GameScreen.scss";
 import Config from "../config.json";
 import Camera from "../view/Camera";
-import { usePlayer } from "../contexts/PlayerContext";
+import { useGameContext } from "../contexts/GameContext";
 import { usePlayerMoveController } from "../controllers/PlayerMoveController";
 
 function GameScreen() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [camera, setCamera] = useState<Camera | null>(null);
-  const { playerHero, currentWorld, currentMap } = usePlayer();
+  const { playerHero, currentWorld, currentMap } = useGameContext();
 
   // Player controllers
   usePlayerMoveController();

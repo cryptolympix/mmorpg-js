@@ -2,11 +2,10 @@
  * The `usePlayerMoveController` hook manages the player's movement within the game.
  */
 import { useEffect, useRef, useState } from "react";
-import { usePlayer } from "../contexts/PlayerContext";
-import Config from "../config.json";
+import { useGameContext } from "../contexts/GameContext";
 
 export function usePlayerMoveController() {
-  const { playerHero, currentWorld, currentMap, updateMap } = usePlayer();
+  const { playerHero, currentWorld, currentMap, updateMap } = useGameContext();
   const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
   const pressedKeys = useRef<Set<string>>(new Set());
   const animationFrameRef = useRef<number | null>(null);

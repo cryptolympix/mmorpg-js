@@ -13,7 +13,7 @@ enum Direction {
  * It handles movement, rendering, and collision box calculations.
  */
 export default class Character {
-  private static readonly MOVE_SPEED = 5;
+  private static readonly MOVE_SPEED = 2;
   private static readonly SPRITE_SHEET_TILE_COUNT = 12;
   private static readonly SPRITE_SHEET_COLUMNS = 3;
   private static readonly ANIMATION_FRAMES = {

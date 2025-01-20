@@ -4,7 +4,7 @@ import World from "../view/map/World";
 import Map from "../view/map/Map";
 import Config from "../config.json";
 
-interface PlayerContextValue {
+interface GameContextValue {
   playerHero: Hero | null;
   currentWorld: World | null;
   currentMap: Map | null;
@@ -13,7 +13,7 @@ interface PlayerContextValue {
   updateMap: (newMap: Map) => void;
 }
 
-const PlayerContext = createContext<PlayerContextValue>({
+const GameContext = createContext<GameContextValue>({
   playerHero: null,
   currentWorld: null,
   currentMap: null,
@@ -22,9 +22,9 @@ const PlayerContext = createContext<PlayerContextValue>({
   updateMap: () => {},
 });
 
-export const usePlayer = () => useContext(PlayerContext);
+export const useGameContext = () => useContext(GameContext);
 
-export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [playerHero, setPlayerHero] = useState<Hero | null>(null);
@@ -116,7 +116,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <PlayerContext.Provider
+    <GameContext.Provider
       value={{
         playerHero,
         currentWorld,
@@ -127,6 +127,6 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       }}
     >
       {children}
-    </PlayerContext.Provider>
+    </GameContext.Provider>
   );
 };
