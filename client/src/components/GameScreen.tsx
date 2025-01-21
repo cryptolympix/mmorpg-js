@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./GameScreen.scss";
 import Config from "../config.json";
 import Camera from "../view/Camera";
+import PlayerHud from "./PlayerHud";
 import { useGameContext } from "../contexts/GameContext";
 import { usePlayerMoveController } from "../controllers/PlayerMoveController";
 
@@ -49,6 +50,7 @@ function GameScreen() {
 
   return (
     <div className="GameScreen">
+      <PlayerHud />
       <canvas
         ref={canvasRef}
         width={canvasWidth}

@@ -1,6 +1,14 @@
-import Character from "./Character";
+import FighterCharacter from "./FighterCharacter";
 
-export default class Hero extends Character {
+function getExperienceForLevel(level: number): number {
+  return level * 100;
+}
+
+function getStatsPointsForLevel(level: number): number {
+  return level * 10;
+}
+
+export default class Hero extends FighterCharacter {
   private static readonly HERO_WIDTH = 32;
   private static readonly HERO_HEIGHT = 48;
   private static readonly HERO_SPRITE_SHEET_TILE_WIDTH = 32;
@@ -13,19 +21,11 @@ export default class Hero extends Character {
   };
   private static readonly HERO_INACTIVE_FRAME_INDEX = 1; // Index of the inactive frame
 
-  private level: number = 1;
   private experience: number = 0;
+  private experienceAtCurrentLevel: number = 0;
+  private experienceToNextLevel: number = 100;
+  private statsPoints: number = 0; // Points to distribute to stats
   private gold: number = 0;
-  private health: number = 100;
-  private maxHealth: number = 100;
-  private mana: number = 100;
-  private maxMana: number = 100;
-  private attack: number = 10;
-  private defense: number = 5;
-  private magic: number = 10;
-  private resistance: number = 5;
-  private speed: number = 10;
-  private dodge: number = 5;
 
   /**
    * Creates a new `Hero` instance.
@@ -49,6 +49,11 @@ export default class Hero extends Character {
     );
   }
 
+  public async load() {
+    await super.load();
+    this.loadStats(0);
+  }
+
   public draw(
     context: CanvasRenderingContext2D,
     cameraOffsetX: number,
@@ -59,7 +64,7 @@ export default class Hero extends Character {
     // Draw the character's level
     context.fillStyle = "white";
     context.textAlign = "center";
-    context.font = "12px Avenir";
+    context.font = "14px Avenir";
     context.fillText(
       `Level ${this.level}`,
       this.x + cameraOffsetX,
@@ -69,11 +74,38 @@ export default class Hero extends Character {
     // Draw the character's name
     context.fillStyle = "white";
     context.textAlign = "center";
-    context.font = "16px Avenir";
+    context.font = "20px Avenir";
     context.fillText(
       this.name,
       this.x + cameraOffsetX,
       this.y - this.getHeight() + cameraOffsetY - 5
     );
+  }
+
+  public levelUp(): void {
+    this.level++;
+    this.experienceAtCurrentLevel = 0;
+    this.experienceToNextLevel = getExperienceForLevel(this.level);
+    this.statsPoints += getStatsPointsForLevel(this.level);
+  }
+
+  public getLevel(): number {
+    return this.level;
+  }
+
+  public getExperience(): number {
+    return this.experience;
+  }
+
+  public getExperienceAtCurrentLevel(): number {
+    return this.experienceAtCurrentLevel;
+  }
+
+  public getExperienceToNextLevel(): number {
+    return this.experienceToNextLevel;
+  }
+
+  public getGold(): number {
+    return this.gold;
   }
 }

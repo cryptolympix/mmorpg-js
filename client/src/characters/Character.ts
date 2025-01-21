@@ -1,14 +1,14 @@
 import SpriteSheet from "../view/SpriteSheet";
 import Config from "../config.json";
 
-enum Direction {
+export enum Direction {
   Down = "down",
   Left = "left",
   Right = "right",
   Up = "up",
 }
 
-interface AnimationFrames {
+export interface AnimationFrames {
   down: number[];
   left: number[];
   right: number[];
@@ -20,16 +20,16 @@ interface AnimationFrames {
  * It handles movement, rendering, and collision box calculations.
  */
 export default class Character {
-  private static readonly DEFAULT_MOVE_SPEED = 2;
-  private static readonly DEFAULT_SPRITE_SHEET_COLUMNS = 3;
-  private static readonly DEFAULT_ANIMATION_FRAMES = {
+  protected static readonly DEFAULT_MOVE_SPEED = 2;
+  protected static readonly DEFAULT_SPRITE_SHEET_COLUMNS = 3;
+  protected static readonly DEFAULT_ANIMATION_FRAMES = {
     down: [0, 1, 2],
     left: [3, 4, 5],
     right: [6, 7, 8],
     up: [9, 10, 11],
   };
-  private static readonly DEFAULT_INACTIVE_FRAME_INDEX = 0; // Index of the inactive frame in a row of the sprite sheet.
-  private static readonly DEFAULT_FRAME_INTERVAL = 100;
+  protected static readonly DEFAULT_INACTIVE_FRAME_INDEX = 0; // Index of the inactive frame in a row of the sprite sheet.
+  protected static readonly DEFAULT_FRAME_INTERVAL = 100;
 
   protected spriteSheet: SpriteSheet;
   protected moveSpeed: number = Character.DEFAULT_MOVE_SPEED;
@@ -61,7 +61,7 @@ export default class Character {
     protected spriteSheetFilePath: string,
     protected spriteSheetTileWidth: number,
     protected spriteSheetTileHeight: number,
-    protected animationFrames: AnimationFrames = Character.DEFAULT_ANIMATION_FRAMES,
+    protected animationFrames = Character.DEFAULT_ANIMATION_FRAMES,
     protected idleFrameIndex = Character.DEFAULT_INACTIVE_FRAME_INDEX,
     protected direction = Direction.Down
   ) {
