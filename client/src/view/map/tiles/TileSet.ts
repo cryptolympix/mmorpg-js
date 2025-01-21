@@ -1,6 +1,6 @@
-import SpriteSheet from "../SpriteSheet";
+import SpriteSheet from "../../SpriteSheet";
 import Tile from "./Tile";
-import Config from "../../config.json";
+import Config from "../../../config.json";
 
 /**
  * Represents a tileset used in a map, allowing for the loading of tileset files

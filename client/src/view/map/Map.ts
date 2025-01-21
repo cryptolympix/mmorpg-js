@@ -1,11 +1,12 @@
 import Config from "../../config.json";
-import Tile from "./Tile";
-import TileSet from "./TileSet";
-import TileLayer from "./TileLayer";
+import Tile from "./tiles/Tile";
+import TileSet from "./tiles/TileSet";
+import TileLayer from "./tiles/TileLayer";
 import SpriteSheet from "../SpriteSheet";
-import Object from "./Object";
-import ObjectGroup from "./ObjectGroup";
+import ObjectGroup from "./objects/ObjectGroup";
 import Character from "../../characters/Character";
+import PointObject from "./objects/PointObject";
+import RectangleObject from "./objects/RectangleObject";
 
 /**
  * Represents a map in a tile-based game, including its tilesets, layers, and spatial properties.
@@ -57,6 +58,23 @@ export default class Map {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(tmxContent, "text/xml");
 
+    this.loadMapProperties(xmlDoc);
+    await this.loadTilesets(xmlDoc);
+    this.loadTileLayers(xmlDoc);
+    this.loadMapObjects(xmlDoc);
+
+    if (Config.dev.debug) {
+      console.log(
+        `Loaded map: ${this.name} with ${this.tileSets.length} tilesets and ${this.tileLayers.length} layers.`
+      );
+    }
+  }
+
+  /**
+   * Load the properties of the map from the XML document.
+   * @param xmlDoc - The XML document containing the map data.
+   */
+  private loadMapProperties(xmlDoc: Document) {
     const map = xmlDoc.querySelector("map");
     if (!map) {
       throw new Error(`Invalid TMX file: ${this.filePath}: missing <map> tag.`);
@@ -73,9 +91,13 @@ export default class Map {
     }
     this.widthInTiles = parseInt(mapWidth, 10);
     this.heightInTiles = parseInt(mapHeight, 10);
+  }
 
-    // ----------------- Parse tilesets -----------------
-
+  /**
+   * Load the tilesets of the map from the XML document.
+   * @param xmlDoc - The XML document containing the map data.
+   */
+  private async loadTilesets(xmlDoc: Document) {
     const tilesets = Array.from(xmlDoc.querySelectorAll("tileset"));
     for (const t of tilesets) {
       const firstGid = parseInt(t.getAttribute("firstgid") || "0", 10);
@@ -85,9 +107,13 @@ export default class Map {
       await tileset.load();
       this.tileSets.push(tileset);
     }
+  }
 
-    // ----------------- Parse layers and create tiles -----------------
-
+  /**
+   * Load the tile layers of the map from the XML document.
+   * @param xmlDoc - The XML document containing the map data.
+   */
+  private loadTileLayers(xmlDoc: Document) {
     const layers = Array.from(xmlDoc.querySelectorAll("layer"));
     for (let l = 0; l < layers.length; l++) {
       const layerId = layers[l].getAttribute("id");
@@ -120,9 +146,13 @@ export default class Map {
 
       this.tileLayers[l] = tileLayer;
     }
+  }
 
-    // ----------------- Parse map objects -----------------
-
+  /**
+   * Load the object groups of the map from the XML document.
+   * @param xmlDoc - The XML document containing the map data.
+   */
+  private loadMapObjects(xmlDoc: Document) {
     const objectGroups = Array.from(xmlDoc.querySelectorAll("objectgroup"));
 
     for (let og of objectGroups) {
@@ -135,8 +165,11 @@ export default class Map {
       for (let obj of objects) {
         const id = obj.getAttribute("id") || "";
         const name = obj.getAttribute("name") || "";
+        const objectClass = obj.getAttribute("class") || "";
         const x = parseInt(obj.getAttribute("x") || "0", 10);
         const y = parseInt(obj.getAttribute("y") || "0", 10);
+        const width = parseInt(obj.getAttribute("width") || "0", 10);
+        const height = parseInt(obj.getAttribute("height") || "0", 10);
 
         // Parse the property of object
         const properties = Array.from(obj.querySelectorAll("property")).map(
@@ -147,16 +180,27 @@ export default class Map {
           })
         );
 
-        objectGroup.addObject(new Object(id, name, x, y, properties));
+        if (width > 0 && height > 0) {
+          objectGroup.addObject(
+            new RectangleObject(
+              id,
+              name,
+              objectClass,
+              width,
+              height,
+              x,
+              y,
+              properties
+            )
+          );
+        } else {
+          objectGroup.addObject(
+            new PointObject(id, name, objectClass, x, y, properties)
+          );
+        }
       }
 
       this.objectGroup.push(objectGroup);
-    }
-
-    if (Config.dev.debug) {
-      console.log(
-        `Loaded map: ${this.name} with ${this.tileSets.length} tilesets and ${this.tileLayers.length} layers.`
-      );
     }
   }
 

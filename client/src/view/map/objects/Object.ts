@@ -2,6 +2,7 @@ export default class Object {
   constructor(
     private id: string,
     private name: string,
+    private objectClass: string,
     private x: number,
     private y: number,
     private properties: { name: string; value: string; type: string }[]
@@ -13,6 +14,10 @@ export default class Object {
 
   public getName(): string {
     return this.name;
+  }
+
+  public getObjectClass(): string {
+    return this.objectClass;
   }
 
   public getX(): number {

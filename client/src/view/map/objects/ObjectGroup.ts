@@ -27,6 +27,12 @@ export default class ObjectGroup {
     return this.objects.find((object) => object.getName() === name);
   }
 
+  public getObjectsByClass(objectClass: string): Object[] {
+    return this.objects.filter(
+      (object) => object.getObjectClass() === objectClass
+    );
+  }
+
   public getObjects(): Object[] {
     return this.objects;
   }
