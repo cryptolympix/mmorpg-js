@@ -1,7 +1,6 @@
-import FighterCharacter from "./FighterCharacter";
+import Fighter from "./Fighter";
 import Object from "../objects/Object";
 import ActivableObject from "../objects/ActivableObject";
-import QuestObject from "../objects/QuestObject";
 import StuffObject, { StuffType } from "../objects/StuffObject";
 
 export enum HeroClass {
@@ -31,7 +30,7 @@ function getStatsPointsForLevel(level: number): number {
   return level * 10;
 }
 
-export default class Hero extends FighterCharacter {
+export default class Hero extends Fighter {
   private static readonly HERO_WIDTH = 32;
   private static readonly HERO_HEIGHT = 48;
   private static readonly HERO_SPRITE_SHEET_TILE_WIDTH = 32;

@@ -13,7 +13,7 @@ interface Stats {
   dodge: number;
 }
 
-export default class FighterCharacter extends Character {
+export default class Fighter extends Character {
   protected level: number = 1;
   protected stats: Stats = {
     health: 0,
