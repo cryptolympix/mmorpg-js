@@ -1,6 +1,3 @@
-/**
- * The `usePlayerMoveController` hook manages the player's movement within the game.
- */
 import { useEffect, useRef, useState } from "react";
 import { useGameContext } from "../contexts/GameContext";
 

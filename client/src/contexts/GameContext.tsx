@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import Hero from "../characters/Hero";
-import World from "../view/map/World";
-import Map from "../view/map/Map";
+import Hero, { HeroClass } from "../engine/characters/Hero";
+import World from "../engine/map/World";
+import Map from "../engine/map/Map";
 import Config from "../config.json";
 
 interface GameContextValue {
@@ -73,7 +73,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
       "Player",
       startObject.getX(),
       startObject.getY(),
-      "/assets/characters/heroes/knight_m.png"
+      "/assets/characters/heroes/knight_m.png",
+      HeroClass.Knight
     );
     await hero.load();
     setPlayerHero(hero);
