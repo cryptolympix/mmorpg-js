@@ -2,7 +2,7 @@ import Config from "../../config.json";
 import Tile from "./tiles/Tile";
 import TileSet from "./tiles/TileSet";
 import TileLayer from "./tiles/TileLayer";
-import SpriteSheet from "../SpriteSheet";
+import SpriteSheet from "../../utils/SpriteSheet";
 import ObjectGroup from "./objects/ObjectGroup";
 import Character from "../characters/Character";
 import PointObject from "./objects/PointObject";

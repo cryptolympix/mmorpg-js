@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./GameScreen.scss";
 import Config from "../config.json";
-import Camera from "../engine/Camera";
+import Camera from "../utils/Camera";
 import PlayerHud from "./PlayerHud";
 import { useGameContext } from "../contexts/GameContext";
 import { usePlayerMoveController } from "../controllers/PlayerMoveController";

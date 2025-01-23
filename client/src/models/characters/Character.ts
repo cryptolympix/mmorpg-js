@@ -1,4 +1,4 @@
-import SpriteSheet from "../SpriteSheet";
+import SpriteSheet from "../../utils/SpriteSheet";
 import Config from "../../config.json";
 
 export enum Direction {

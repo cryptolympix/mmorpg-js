@@ -1,6 +1,6 @@
-import Hero from "./characters/Hero";
-import Character from "./characters/Character";
-import Map from "./map/Map";
+import Hero from "../models/characters/Hero";
+import Character from "../models/characters/Character";
+import Map from "../models/map/Map";
 
 /**
  * Represents the Camera that manages rendering of the game map and characters.

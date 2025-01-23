@@ -1,4 +1,4 @@
-import SpriteSheet from "../../SpriteSheet";
+import SpriteSheet from "../../../utils/SpriteSheet";
 import Tile from "./Tile";
 import Config from "../../../config.json";
 

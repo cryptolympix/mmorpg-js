@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import Hero, { HeroClass } from "../engine/characters/Hero";
-import World from "../engine/map/World";
-import Map from "../engine/map/Map";
+import Hero, { HeroClass } from "../models/characters/Hero";
+import World from "../models/map/World";
+import Map from "../models/map/Map";
 import Config from "../config.json";
 
 interface GameContextValue {
