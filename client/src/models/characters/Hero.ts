@@ -54,6 +54,7 @@ export default class Hero extends Fighter {
 
   /**
    * Creates a new `Hero` instance.
+   * @param id - The unique identifier for the hero.
    * @param name - The name of the hero.
    * @param x - The initial x-coordinate of the hero.
    * @param y - The initial y-coordinate of the hero.
@@ -61,6 +62,7 @@ export default class Hero extends Fighter {
    * @param heroClass - The class of the hero.
    */
   constructor(
+    id: string,
     name: string,
     x: number,
     y: number,
@@ -68,6 +70,7 @@ export default class Hero extends Fighter {
     heroClass: HeroClass
   ) {
     super(
+      id,
       name,
       x,
       y,

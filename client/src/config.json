@@ -1,5 +1,6 @@
 {
   "paths": {
+    "SERVER_URL": "http://localhost:3000",
     "MAPS_FOLDER": "/assets/worlds/",
     "SPRITESHEETS_FOLDER": "/assets/worlds/spritesheets/",
     "MUSICS_FOLDER": "/assets/musics/"

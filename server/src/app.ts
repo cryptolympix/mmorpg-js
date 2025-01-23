@@ -1,8 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
+import fs from "fs";
 import path from "path";
 
+import heroRoutes from "./routes/hero.routes";
+
 import "./database";
+
+const appDirectory = fs.realpathSync(process.cwd());
+const sourceFolder = path.resolve(appDirectory, "src");
+const assetsFolder = path.resolve(sourceFolder, "assets");
 
 dotenv.config();
 
@@ -22,9 +29,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use("/images", express.static(path.join(process.cwd(), "images")));
-app.use("/ping", (req, res) => {
-  res.send("pong");
-});
+app.use("/assets", express.static(assetsFolder));
+app.use("/api/heroes", heroRoutes);
 
 export default app;

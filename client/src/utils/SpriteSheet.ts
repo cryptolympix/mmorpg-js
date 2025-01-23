@@ -29,24 +29,28 @@ class SpriteSheet {
   /**
    * Loads the sprite sheet image from the file path.
    */
-  public async load(): Promise<void> {
+  public async load() {
     if (this.image || !this.filePath) return;
 
-    const image = new Image();
-    image.src = this.filePath;
+    const img = new Image();
+    img.src = this.filePath;
 
-    try {
-      await image.decode();
-      this.image = image;
+    // Await the image load using an async wrapper
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => {
+        this.image = img;
+        if (Config.dev.debug) {
+          console.log(`Loaded spritesheet image at ${this.filePath}`);
+        }
+        resolve();
+      };
 
-      if (Config.dev.debug) {
-        console.log(`Loaded spritesheet image at ${this.filePath}`);
-      }
-    } catch (error) {
-      throw new Error(
-        `Failed to load spritesheet image at ${this.filePath}: ${error}`
-      );
-    }
+      img.onerror = () => {
+        reject(
+          new Error(`Failed to load sprite sheet image at ${this.filePath}`)
+        );
+      };
+    });
   }
 
   /**

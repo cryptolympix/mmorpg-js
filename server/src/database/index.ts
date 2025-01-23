@@ -1,6 +1,7 @@
-import HeroSchema from "./hero.schema";
+import { JsonDB, Config } from "node-json-db";
 
-// const { Schema } = new dbLocal({ path: "./database" });
-// const Hero = Schema("Hero", HeroSchema);
+import HeroSchema from "./schemas/hero.schemas";
 
-// export default Schema;
+const database = new JsonDB(new Config("database", true, false, "/"));
+
+export { database, HeroSchema };

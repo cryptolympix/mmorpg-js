@@ -39,7 +39,7 @@ export default class World {
     for (const mapData of data.maps) {
       const { fileName, width, height, x, y } = mapData;
       const map = new Map(
-        Config.paths.MAPS_FOLDER + fileName,
+        Config.paths.SERVER_URL + Config.paths.MAPS_FOLDER + fileName,
         x,
         y,
         width,

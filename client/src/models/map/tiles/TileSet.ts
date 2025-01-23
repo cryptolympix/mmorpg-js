@@ -66,7 +66,9 @@ export default class TileSet {
       }
 
       const imageFilepath = (
-        Config.paths.SPRITESHEETS_FOLDER + image.getAttribute("source")!
+        Config.paths.SERVER_URL +
+        Config.paths.SPRITESHEETS_FOLDER +
+        image.getAttribute("source")!
       )
         .replace(/\.\//g, "/")
         .replace(/\/\//g, "/");

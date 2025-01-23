@@ -6,11 +6,8 @@ import { Socket } from "socket.io";
 import app from "./app";
 
 const appDirectory = fs.realpathSync(process.cwd());
-const imagesFolder = path.resolve(appDirectory, "images");
-
-if (!fs.existsSync(imagesFolder)) {
-  throw new Error("Images folder does not exist");
-}
+export const sourceFolder = path.resolve(appDirectory, "src");
+export const assetsFolder = path.resolve(sourceFolder, "assets");
 
 const normalizePort = (val: string) => {
   const port = parseInt(val, 10);

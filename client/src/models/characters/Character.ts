@@ -40,6 +40,7 @@ export default class Character {
 
   /**
    * Creates a new `Character` instance.
+   * @param id - The unique identifier for the character.
    * @param name - The name of the character.
    * @param x - The initial x-coordinate of the character.
    * @param y - The initial y-coordinate of the character.
@@ -53,6 +54,7 @@ export default class Character {
    * @param direction - The initial direction of the character.
    */
   constructor(
+    protected id: string,
     protected name: string,
     protected x: number,
     protected y: number,
@@ -88,7 +90,11 @@ export default class Character {
    * Loads the character's sprite sheet.
    */
   public async load() {
-    await this.spriteSheet.load();
+    try {
+      await this.spriteSheet.load();
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   /**
@@ -225,6 +231,14 @@ export default class Character {
     const tileIndex =
       this.animationFrames[this.direction][this.currentFrameIndex];
     return this.spriteSheet.getTile(tileIndex);
+  }
+
+  /**
+   * Gets the character's unique identifier.
+   * @returns The unique identifier of the character.
+   */
+  public getId() {
+    return this.id;
   }
 
   /**

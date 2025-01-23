@@ -32,7 +32,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentMap, setCurrentMap] = useState<Map | null>(null);
 
   const loadInitialWorld = async () => {
-    const world = new World(Config.start.world);
+    const world = new World(Config.paths.SERVER_URL + Config.start.world);
     await world.load();
     setCurrentWorld(world);
   };
@@ -70,10 +70,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
     const startObject = objectGroup.getObjectByName("Start");
 
     const hero = new Hero(
+      Date.now().toString(),
       "Player",
       startObject.getX(),
       startObject.getY(),
-      "/assets/characters/heroes/knight_m.png",
+      Config.paths.SERVER_URL + "/assets/characters/heroes/knight_m.png",
       HeroClass.Knight
     );
     await hero.load();

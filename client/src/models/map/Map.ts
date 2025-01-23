@@ -101,7 +101,10 @@ export default class Map {
     const tilesets = Array.from(xmlDoc.querySelectorAll("tileset"));
     for (const t of tilesets) {
       const firstGid = parseInt(t.getAttribute("firstgid") || "0", 10);
-      const tsxFilePath = Config.paths.MAPS_FOLDER + t.getAttribute("source");
+      const tsxFilePath =
+        Config.paths.SERVER_URL +
+        Config.paths.MAPS_FOLDER +
+        t.getAttribute("source");
       if (!tsxFilePath) continue;
       const tileset = new TileSet(tsxFilePath, firstGid);
       await tileset.load();
