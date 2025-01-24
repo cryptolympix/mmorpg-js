@@ -65,13 +65,10 @@ export default class TileSet {
         );
       }
 
-      const imageFilepath = (
+      const imageFilepath =
         Config.paths.SERVER_URL +
         Config.paths.SPRITESHEETS_FOLDER +
-        image.getAttribute("source")!
-      )
-        .replace(/\.\//g, "/")
-        .replace(/\/\//g, "/");
+        image.getAttribute("source");
 
       if (!imageFilepath) {
         throw new Error(
