@@ -1,5 +1,5 @@
 import SpriteSheet from "../../utils/SpriteSheet";
-import Config from "../../config.json";
+import Config from "../../../../shared/config.json";
 import World from "../map/World";
 import { Direction } from "../../../../shared/types";
 
@@ -39,7 +39,7 @@ export default class Character {
    * @param spriteSheetTileWidth - Width of each tile in the sprite sheet.
    * @param spriteSheetTileHeight - Height of each tile in the sprite sheet.
    * @param animationFrames - Animation frames for the character.
-   * @param idleFrameIndex - Index of the inactive frame in a row of the sprite sheet.
+   * @param inactiveFrameIndex - Index of the inactive frame in a row of the sprite sheet.
    * @param direction - The initial direction of the character.
    */
   constructor(
@@ -54,7 +54,7 @@ export default class Character {
     protected spriteSheetTileWidth: number,
     protected spriteSheetTileHeight: number,
     protected animationFrames = Character.DEFAULT_ANIMATION_FRAMES,
-    protected idleFrameIndex = Character.DEFAULT_INACTIVE_FRAME_INDEX,
+    protected inactiveFrameIndex = Character.DEFAULT_INACTIVE_FRAME_INDEX,
     protected direction = Direction.Down
   ) {
     if (
@@ -100,7 +100,7 @@ export default class Character {
         this.lastFrameTime = currentTime; // Met à jour le dernier temps
       }
     } else {
-      this.currentFrameIndex = this.idleFrameIndex;
+      this.currentFrameIndex = this.inactiveFrameIndex;
     }
   }
 

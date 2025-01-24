@@ -2,8 +2,11 @@ import http from "http";
 import fs from "fs";
 import path from "path";
 import { Socket } from "socket.io";
+import Config from "../../shared/config.json";
 
 import app from "./app";
+
+import "./database";
 
 const appDirectory = fs.realpathSync(process.cwd());
 export const sourceFolder = path.resolve(appDirectory, "src");
@@ -20,7 +23,11 @@ const normalizePort = (val: string) => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || "3000");
+
+const port =
+  normalizePort(
+    Config.urls.server.split(":")[Config.urls.server.split(":").length - 1]
+  ) || 3000;
 app.set("port", port);
 
 const errorHandler = (error) => {

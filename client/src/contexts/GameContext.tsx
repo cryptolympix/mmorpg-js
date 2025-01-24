@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Hero from "../models/characters/Hero";
-import * as HeroApi from "../api/hero.api";
 import World from "../models/map/World";
 import Map from "../models/map/Map";
-import Config from "../config.json";
-import { HeroClass } from "../../../shared/types";
+import Config from "../../../shared/config.json";
 
 interface GameContextValue {
   playerHero: Hero | null;
@@ -33,85 +31,25 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentWorld, setCurrentWorld] = useState<World | null>(null);
   const [currentMap, setCurrentMap] = useState<Map | null>(null);
 
-  const loadInitialWorld = async () => {
-    const world = new World(Config.paths.SERVER_URL + Config.start.world);
-    await world.load();
-    setCurrentWorld(world);
-  };
+  useEffect(() => {
+    if (!playerHero) return;
 
-  const loadInitialMap = async () => {
-    if (!currentWorld) return;
+    async function load() {
+      const world = new World(playerHero.getWorld().getName());
+      await world.load();
+      const map = world.getMapByPosition(playerHero.getX(), playerHero.getY());
 
-    // Search the map where the start object is located
-    for (const map of currentWorld.getMaps()) {
-      if (
-        map
-          .getObjectGroups()
-          .some((o) => o.getObjectByName("Start") !== undefined)
-      ) {
-        setCurrentMap(map);
-        break;
+      if (!map) {
+        throw new Error(
+          `Failed to find map at position (${playerHero.getX()}, ${playerHero.getY()})`
+        );
       }
+
+      setCurrentWorld(world);
+      setCurrentMap(map);
     }
-  };
-
-  const loadHero = async () => {
-    if (!currentWorld || !currentMap) return;
-
-    // Do not load the hero if it already exists
-    if (playerHero) return;
-
-    const objectGroup = currentMap
-      .getObjectGroups()
-      .find((o) => o.getObjectByName("Start") !== undefined);
-
-    if (!objectGroup) {
-      throw new Error("Start object not found in map");
-    }
-
-    const startObject = objectGroup.getObjectByName("Start");
-
-    const hero = new Hero(
-      Date.now().toString(),
-      "Player",
-      startObject.getX(),
-      startObject.getY(),
-      currentWorld,
-      Config.paths.SERVER_URL + "/assets/characters/heroes/knight_m.png",
-      HeroClass.Knight
-    );
-
-    await hero.load();
-    setPlayerHero(hero);
-    console.log(hero);
-    HeroApi.createHero(hero).then(() => {
-      console.log("Hero created");
-    });
-  };
-
-  // Load the current world
-  useEffect(() => {
-    const load = async () => {
-      await loadInitialWorld();
-    };
     load();
-  }, []);
-
-  // Load the current map
-  useEffect(() => {
-    const load = async () => {
-      await loadInitialMap();
-    };
-    load();
-  }, [currentWorld]);
-
-  // Load the player hero
-  useEffect(() => {
-    const load = async () => {
-      await loadHero();
-    };
-    load();
-  }, [currentMap, currentWorld]);
+  }, [playerHero]);
 
   const updatePlayerHero = (playerHero: Hero) => {
     setPlayerHero(playerHero);

@@ -1,6 +1,5 @@
 import "./App.scss";
-import { useState } from "react";
-import Config from "./config.json";
+import Config from "../../shared/config.json";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import GameScreen from "./components/GameScreen";
 import { GameProvider } from "./contexts/GameContext";

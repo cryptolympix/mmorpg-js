@@ -1,5 +1,5 @@
 import Map from "./Map";
-import Config from "../../config.json";
+import Config from "../../../../shared/config.json";
 
 /**
  * Represents a game world consisting of multiple maps.
@@ -11,18 +11,13 @@ export default class World {
 
   /**
    * Creates a new World instance.
-   * @param filePath - The file path to the world configuration (must end with .world).
+   * @param name - The name of the world.
    * @throws {Error} If the filePath does not end with .world.
    */
-  constructor(filePath: string) {
-    if (!filePath.endsWith(".world")) {
-      throw new Error(
-        `Invalid world file: ${filePath} - must be a .world file`
-      );
-    }
-
-    this.filePath = filePath;
-    this.name = filePath.split("/").pop()!.replace(".world", "");
+  constructor(name: string) {
+    this.filePath =
+      Config.urls.server + Config.paths.worldsFolder + "/" + name + ".world";
+    this.name = name;
   }
 
   /**
@@ -39,7 +34,7 @@ export default class World {
     for (const mapData of data.maps) {
       const { fileName, width, height, x, y } = mapData;
       const map = new Map(
-        Config.paths.SERVER_URL + Config.paths.MAPS_FOLDER + fileName,
+        Config.urls.server + Config.paths.worldsFolder + fileName,
         x,
         y,
         width,
@@ -51,10 +46,50 @@ export default class World {
   }
 
   /**
+   * Retrieves the starting point of the world.
+   * @returns An object containing the x and y coordinates of the starting point.
+   */
+  public getStartPoint(): { x: number; y: number } {
+    for (const map of this.maps) {
+      const objectGroup = map
+        .getObjectGroups()
+        .find((o) => o.getObjectByName("Start") !== undefined);
+
+      if (objectGroup) {
+        const startObject = objectGroup.getObjectByName("Start");
+        return { x: startObject.getX(), y: startObject.getY() };
+      }
+    }
+
+    if (Config.dev.debug) {
+      console.warn("Start point not found in the world:", this.name);
+    }
+
+    // Return default start point if not found
+    return { x: 0, y: 0 };
+  }
+
+  /**
+   * Retrieves the initial map of the world.
+   * @returns The initial map of the world.
+   */
+  public getInitialMap(): Map {
+    for (const map of this.maps) {
+      if (
+        map
+          .getObjectGroups()
+          .some((o) => o.getObjectByName("Start") !== undefined)
+      ) {
+        return map;
+      }
+    }
+  }
+
+  /**
    * Retrieves the name of the world.
    * @returns The name of the world.
    */
-  getName(): string {
+  public getName(): string {
     return this.name;
   }
 
@@ -62,7 +97,7 @@ export default class World {
    * Retrieves all maps in the world.
    * @returns An array of maps in the world.
    */
-  getMaps(): Map[] {
+  public getMaps(): Map[] {
     return this.maps;
   }
 
@@ -71,7 +106,7 @@ export default class World {
    * @param name - The name of the map to retrieve.
    * @returns The map with the specified name, or undefined if not found.
    */
-  getMap(name: string): Map | undefined {
+  public getMap(name: string): Map | undefined {
     return this.maps.find((map) => map.getName() === name);
   }
 
@@ -81,7 +116,7 @@ export default class World {
    * @param y - The y-coordinate of the position (in pixels).
    * @returns The map containing the specified position, or null if no map is found.
    */
-  getMapByPosition(x: number, y: number): Map | undefined {
+  public getMapByPosition(x: number, y: number): Map | undefined {
     return this.maps.find((map) => {
       return (
         x >= map.getX() &&

@@ -10,6 +10,7 @@ export interface HeroSchema {
   walking: boolean;
   spriteSheet: string;
   heroClass: HeroClass;
+  sex: string;
   experience: number;
   statsPoints: number;
   gold: number;

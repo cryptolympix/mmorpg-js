@@ -5,6 +5,11 @@ export enum Direction {
   Up = "up",
 }
 
+export enum HeroSex {
+  Male = "male",
+  Female = "female",
+}
+
 export enum HeroClass {
   Druid = "Druid",
   Hunter = "Hunter",

@@ -1,0 +1,26 @@
+{
+  "urls": {
+    "client": "http://localhost:5173",
+    "server": "http://localhost:3000"
+  },
+  "paths": {
+    "worldsFolder": "/assets/worlds/",
+    "worldsSpritesheetsFolder": "/assets/worlds/spritesheets/",
+    "charactersFolder": "/assets/characters/",
+    "charactersSpritesheetsFolder": "/assets/characters/spritesheets/",
+    "musicFolder": "/assets/musics/"
+  },
+  "common": {
+    "title": "MMORPG",
+    "gamescreen": {
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "start": {
+    "world": "world-1"
+  },
+  "dev": {
+    "debug": false
+  }
+}

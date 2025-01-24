@@ -1,18 +1,13 @@
 import express from "express";
-import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import cors from "cors";
 
-import heroRoutes from "./routes/hero.routes";
-
-import "./database";
+import heroesRoutes from "./routes/heroes.routes";
 
 const appDirectory = fs.realpathSync(process.cwd());
 const sourceFolder = path.resolve(appDirectory, "src");
 const assetsFolder = path.resolve(sourceFolder, "assets");
-
-dotenv.config();
 
 const app = express();
 
@@ -26,6 +21,6 @@ app.use(
 
 app.use(express.json());
 app.use("/assets", express.static(assetsFolder));
-app.use("/api/hero", heroRoutes);
+app.use("/api/heroes", heroesRoutes);
 
 export default app;

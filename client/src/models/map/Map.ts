@@ -1,4 +1,4 @@
-import Config from "../../config.json";
+import Config from "../../../../shared/config.json";
 import Tile from "./tiles/Tile";
 import TileSet from "./tiles/TileSet";
 import TileLayer from "./tiles/TileLayer";
@@ -102,8 +102,8 @@ export default class Map {
     for (const t of tilesets) {
       const firstGid = parseInt(t.getAttribute("firstgid") || "0", 10);
       const tsxFilePath =
-        Config.paths.SERVER_URL +
-        Config.paths.MAPS_FOLDER +
+        Config.urls.server +
+        Config.paths.worldsFolder +
         t.getAttribute("source");
       if (!tsxFilePath) continue;
       const tileset = new TileSet(tsxFilePath, firstGid);

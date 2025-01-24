@@ -1,6 +1,6 @@
 import SpriteSheet from "../../../utils/SpriteSheet";
 import Tile from "./Tile";
-import Config from "../../../config.json";
+import Config from "../../../../../shared/config.json";
 
 /**
  * Represents a tileset used in a map, allowing for the loading of tileset files
@@ -66,8 +66,8 @@ export default class TileSet {
       }
 
       const imageFilepath =
-        Config.paths.SERVER_URL +
-        Config.paths.SPRITESHEETS_FOLDER +
+        Config.urls.server +
+        Config.paths.worldsSpritesheetsFolder +
         image.getAttribute("source");
 
       if (!imageFilepath) {

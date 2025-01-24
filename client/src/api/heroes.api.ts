@@ -1,33 +1,35 @@
 import axios from "axios";
-import Config from "../config.json";
+import Config from "../../../shared/config.json";
 import Hero from "../models/characters/Hero";
 import { HeroSchema } from "../../../shared/database.schemas";
 
-export const getHeroes = async () => {
+export const getHeroes = async (): Promise<HeroSchema[]> => {
+  return axios.get(Config.urls.server + "/api/heroes").then((response) => {
+    if (response.status === 200) {
+      let data = [];
+      for (let key in response.data) {
+        data.push(response.data[key]);
+      }
+      return data;
+    } else {
+      throw new Error("Failed to get heroes");
+    }
+  });
+};
+
+export const getHero = async (heroId: string): Promise<HeroSchema> => {
   return axios
-    .get(Config.paths.SERVER_URL + "/api/hero")
+    .get(Config.urls.server + "/api/heroes/" + heroId)
     .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Failed to get heroes", error);
-      return [];
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error(`Failed to get hero ${heroId}`);
+      }
     });
 };
 
-export const getHero = async (heroId: string) => {
-  return axios
-    .get(Config.paths.SERVER_URL + "/api/hero/" + heroId)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Failed to get hero", error);
-      return null;
-    });
-};
-
-export const createHero = async (hero: Hero) => {
+export const createHero = async (hero: Hero): Promise<string> => {
   const heroData: HeroSchema = {
     id: hero.getId(),
     name: hero.getName(),
@@ -38,6 +40,7 @@ export const createHero = async (hero: Hero) => {
     walking: hero.isWalking(),
     spriteSheet: hero.getSpriteSheet().getFilePath(),
     heroClass: hero.getHeroClass(),
+    sex: hero.getSex(),
     experience: hero.getExperience(),
     statsPoints: hero.getStatsPoints(),
     gold: hero.getGold(),
@@ -57,12 +60,14 @@ export const createHero = async (hero: Hero) => {
     skills: [],
   };
   return axios
-    .post(Config.paths.SERVER_URL + "/api/hero", heroData)
+    .post(Config.urls.server + "/api/heroes", heroData)
     .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      console.error("Failed to create hero", error);
-      return null;
+      if (response.status === 201) {
+        return response.data;
+      } else if (response.status === 400) {
+        throw new Error("Hero name already exists");
+      } else {
+        throw new Error("Failed to create hero");
+      }
     });
 };

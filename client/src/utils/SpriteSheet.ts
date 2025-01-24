@@ -1,4 +1,4 @@
-import Config from "../config.json";
+import Config from "../../../shared/config.json";
 
 class SpriteSheet {
   private image: HTMLImageElement | null = null; // The sprite sheet image

@@ -1,7 +1,7 @@
 import Fighter from "./Fighter";
 import Object from "../objects/Object";
 import World from "../map/World";
-import { HeroClass, HeroStuff } from "../../../../shared/types";
+import { HeroClass, HeroSex, HeroStuff } from "../../../../shared/types";
 
 function getExperienceForLevel(level: number): number {
   return level * 100;
@@ -30,6 +30,7 @@ export default class Hero extends Fighter {
   private statsPoints: number = 0; // Points to distribute to stats
   private gold: number = 0;
   private heroClass: HeroClass;
+  private sex: HeroSex;
   private objects: Object[] = [];
   private stuff: HeroStuff = {};
 
@@ -42,6 +43,7 @@ export default class Hero extends Fighter {
    * @param world - The world the hero belongs to.
    * @param spriteSheetFilePath - Path to the sprite sheet image.
    * @param heroClass - The class of the hero.
+   * @param sex - The sex of the hero.
    */
   constructor(
     id: string,
@@ -50,7 +52,8 @@ export default class Hero extends Fighter {
     y: number,
     world: World,
     spriteSheetFilePath: string,
-    heroClass: HeroClass
+    heroClass: HeroClass,
+    sex: HeroSex
   ) {
     super(
       id,
@@ -66,7 +69,9 @@ export default class Hero extends Fighter {
       Hero.HERO_ANIMATION_FRAMES,
       Hero.HERO_INACTIVE_FRAME_INDEX
     );
+    this.world = world;
     this.heroClass = heroClass;
+    this.sex = sex;
   }
 
   public async load() {
@@ -141,6 +146,10 @@ export default class Hero extends Fighter {
 
   public getLevel(): number {
     return this.level;
+  }
+
+  public getSex(): HeroSex {
+    return this.sex;
   }
 
   public getExperience(): number {

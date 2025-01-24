@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import "./GameScreen.scss";
-import Config from "../config.json";
+import Config from "../../../shared/config.json";
+import LoginScreen from "./LoginScreen";
 import Camera from "../utils/Camera";
 import PlayerHud from "./PlayerHud";
 import { useGameContext } from "../contexts/GameContext";
 import { usePlayerMoveController } from "../controllers/PlayerMoveController";
 
-function GameScreen() {
+interface GameScreenProps {}
+
+const GameScreen: React.FC<GameScreenProps> = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [camera, setCamera] = useState<Camera | null>(null);
   const { playerHero, currentWorld, currentMap } = useGameContext();
@@ -50,14 +53,20 @@ function GameScreen() {
 
   return (
     <div className="GameScreen">
-      <PlayerHud />
-      <canvas
-        ref={canvasRef}
-        width={canvasWidth}
-        height={canvasHeight}
-      ></canvas>
+      {playerHero ? (
+        <>
+          <PlayerHud />
+          <canvas
+            ref={canvasRef}
+            width={canvasWidth}
+            height={canvasHeight}
+          ></canvas>
+        </>
+      ) : (
+        <LoginScreen />
+      )}
     </div>
   );
-}
+};
 
 export default GameScreen;
