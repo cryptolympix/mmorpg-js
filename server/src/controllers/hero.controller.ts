@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { database, HeroSchema } from "../database";
+import { database } from "../database";
+import { HeroSchema } from "../../../shared/database.schemas";
 
 export function getHero(req: Request, res: Response) {
   if (!req.params.id) {

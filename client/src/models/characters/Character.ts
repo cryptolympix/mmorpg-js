@@ -1,19 +1,7 @@
 import SpriteSheet from "../../utils/SpriteSheet";
 import Config from "../../config.json";
-
-export enum Direction {
-  Down = "down",
-  Left = "left",
-  Right = "right",
-  Up = "up",
-}
-
-export interface AnimationFrames {
-  down: number[];
-  left: number[];
-  right: number[];
-  up: number[];
-}
+import World from "../map/World";
+import { Direction } from "../../../../shared/types";
 
 /**
  * The `Character` class represents a game character with position, size, and animation details.
@@ -44,6 +32,7 @@ export default class Character {
    * @param name - The name of the character.
    * @param x - The initial x-coordinate of the character.
    * @param y - The initial y-coordinate of the character.
+   * @param world - The world the character belongs to.
    * @param width - The width of the character.
    * @param height - The height of the character.
    * @param spriteSheetFilePath - Path to the sprite sheet image.
@@ -58,6 +47,7 @@ export default class Character {
     protected name: string,
     protected x: number,
     protected y: number,
+    protected world: World,
     protected width: number,
     protected height: number,
     protected spriteSheetFilePath: string,
@@ -263,6 +253,14 @@ export default class Character {
    */
   public getY() {
     return this.y;
+  }
+
+  /**
+   * Gets the world the character belongs to.
+   * @returns The `World` instance associated with the character.
+   */
+  public getWorld() {
+    return this.world;
   }
 
   /**

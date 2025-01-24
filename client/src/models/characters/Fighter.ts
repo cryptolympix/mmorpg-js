@@ -1,17 +1,5 @@
 import Character from "./Character";
-
-interface Stats {
-  health: number;
-  maxHealth: number;
-  mana: number;
-  maxMana: number;
-  attack: number;
-  defense: number;
-  magic: number;
-  resistance: number;
-  speed: number;
-  dodge: number;
-}
+import { Stats } from "../../../../shared/types";
 
 export default class Fighter extends Character {
   protected level: number = 1;
@@ -28,7 +16,7 @@ export default class Fighter extends Character {
     dodge: 0,
   };
 
-  protected async loadStats(characterId: number) {
+  protected async loadStats() {
     this.level = 1;
     this.stats = {
       health: 100,

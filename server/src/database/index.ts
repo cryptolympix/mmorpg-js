@@ -1,7 +1,10 @@
 import { JsonDB, Config } from "node-json-db";
 
-import HeroSchema from "./schemas/hero.schemas";
+import { HeroSchema } from "../../../shared/database.schemas";
 
-const database = new JsonDB(new Config("database", true, false, "/"));
+const saveOnPush = true;
+const humanReadable = true;
+const config = new Config("database", saveOnPush, humanReadable, "/");
+const database = new JsonDB(config);
 
 export { database, HeroSchema };

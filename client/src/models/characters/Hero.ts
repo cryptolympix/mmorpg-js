@@ -1,26 +1,7 @@
 import Fighter from "./Fighter";
 import Object from "../objects/Object";
-import ActivableObject from "../objects/ActivableObject";
-import StuffObject, { StuffType } from "../objects/StuffObject";
-
-export enum HeroClass {
-  Druid = "Druid",
-  Hunter = "Hunter",
-  Knight = "Archer",
-  Mage = "Mage",
-  Paladin = "Paladin",
-  Robber = "Robber",
-}
-
-interface HeroStuff {
-  helmet?: StuffObject;
-  armor?: StuffObject;
-  weapon?: StuffObject;
-  shield?: StuffObject;
-  boots?: StuffObject;
-  gloves?: StuffObject;
-  pants?: StuffObject;
-}
+import World from "../map/World";
+import { HeroClass, HeroStuff } from "../../../../shared/types";
 
 function getExperienceForLevel(level: number): number {
   return level * 100;
@@ -58,6 +39,7 @@ export default class Hero extends Fighter {
    * @param name - The name of the hero.
    * @param x - The initial x-coordinate of the hero.
    * @param y - The initial y-coordinate of the hero.
+   * @param world - The world the hero belongs to.
    * @param spriteSheetFilePath - Path to the sprite sheet image.
    * @param heroClass - The class of the hero.
    */
@@ -66,6 +48,7 @@ export default class Hero extends Fighter {
     name: string,
     x: number,
     y: number,
+    world: World,
     spriteSheetFilePath: string,
     heroClass: HeroClass
   ) {
@@ -74,6 +57,7 @@ export default class Hero extends Fighter {
       name,
       x,
       y,
+      world,
       Hero.HERO_WIDTH,
       Hero.HERO_HEIGHT,
       spriteSheetFilePath,
@@ -87,7 +71,7 @@ export default class Hero extends Fighter {
 
   public async load() {
     await super.load();
-    this.loadStats(0);
+    this.loadStats();
   }
 
   public draw(
@@ -149,60 +133,11 @@ export default class Hero extends Fighter {
     this.objects.push(Object);
   }
 
-  public useObject(ActivableObjectId: string): void {
-    const objectIndex = this.objects.findIndex(
-      (object) => object.getId() === ActivableObjectId
-    );
+  public useObject(objectId: string): void {}
 
-    if (objectIndex !== -1) {
-      const object = this.objects[objectIndex];
-      if (object instanceof ActivableObject) {
-        object.use(this);
-      }
-    }
-  }
+  public equipStuff(stuffId: string): void {}
 
-  public equipStuff(stuff: StuffObject): void {
-    if (stuff.getHeroClass() !== this.heroClass) {
-      return;
-    }
-
-    if (this.stuff[stuff.getType()]) {
-      this.objects.push(this.stuff[stuff.getType()]);
-    }
-
-    switch (stuff.getType()) {
-      case StuffType.Helmet:
-        this.stuff.helmet = stuff;
-        break;
-      case StuffType.Armor:
-        this.stuff.armor = stuff;
-        break;
-      case StuffType.Weapon:
-        this.stuff.weapon = stuff;
-        break;
-      case StuffType.Shield:
-        this.stuff.shield = stuff;
-        break;
-      case StuffType.Boots:
-        this.stuff.boots = stuff;
-        break;
-      case StuffType.Gloves:
-        this.stuff.gloves = stuff;
-        break;
-      case StuffType.Pants:
-        this.stuff.pants = stuff;
-        break;
-    }
-  }
-
-  public removeStuff(stuffType: StuffType): void {
-    const stuff = this.stuff[stuffType];
-    if (stuff) {
-      this.objects.push(stuff);
-      this.stuff[stuffType] = undefined;
-    }
-  }
+  public removeStuff(stuffId: string): void {}
 
   public getLevel(): number {
     return this.level;

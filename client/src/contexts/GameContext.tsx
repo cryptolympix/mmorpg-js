@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import Hero, { HeroClass } from "../models/characters/Hero";
+import Hero from "../models/characters/Hero";
+import * as HeroApi from "../api/hero.api";
 import World from "../models/map/World";
 import Map from "../models/map/Map";
 import Config from "../config.json";
+import { HeroClass } from "../../../shared/types";
 
 interface GameContextValue {
   playerHero: Hero | null;
@@ -74,11 +76,17 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
       "Player",
       startObject.getX(),
       startObject.getY(),
+      currentWorld,
       Config.paths.SERVER_URL + "/assets/characters/heroes/knight_m.png",
       HeroClass.Knight
     );
+
     await hero.load();
     setPlayerHero(hero);
+    console.log(hero);
+    HeroApi.createHero(hero).then(() => {
+      console.log("Hero created");
+    });
   };
 
   // Load the current world

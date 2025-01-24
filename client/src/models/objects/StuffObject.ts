@@ -1,15 +1,6 @@
-import Hero, { HeroClass } from "../characters/Hero";
+import Hero from "../characters/Hero";
+import { HeroClass, StuffType } from "../../../../shared/types";
 import Object from "./Object";
-
-export enum StuffType {
-  Helmet = "helmet",
-  Armor = "armor",
-  Weapon = "weapon",
-  Shield = "shield",
-  Boots = "boots",
-  Gloves = "gloves",
-  Pants = "pants",
-}
 
 export default class StuffObject extends Object {
   private type: StuffType;
