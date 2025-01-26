@@ -16,7 +16,7 @@ export enum HeroClass {
   Knight = "Knight",
   Mage = "Mage",
   Paladin = "Paladin",
-  Robber = "Robber",
+  Assassin = "Assassin",
 }
 
 export interface HeroStuff {

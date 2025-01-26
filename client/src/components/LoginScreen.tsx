@@ -100,6 +100,26 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
       });
   };
 
+  const handleDeleteHero = async (heroId: string) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this hero? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await HeroApi.deleteHero(heroId); // Call the API to delete the hero
+      setHeroes((prevHeroes) =>
+        prevHeroes.filter((hero) => hero.getId() !== heroId)
+      ); // Update the UI
+      if (selectedHeroId === heroId) setSelectedHeroId(null); // Deselect if deleted
+    } catch (error) {
+      alert("Failed to delete the hero. Please try again.");
+    }
+  };
+
   return (
     <div
       className="LoginScreen"
@@ -193,17 +213,47 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
                 className={`choice-box ${
                   selectedHeroId === hero.getId() ? "selected" : ""
                 }`}
-                onClick={() => setSelectedHeroId(hero.getId())}
               >
-                <label>
-                  <input
-                    type="radio"
-                    value={hero.getId()}
-                    checked={selectedHeroId === hero.getId()}
-                    onChange={() => setSelectedHeroId(hero.getId())}
-                  />
-                  {`${hero.getName()} (${hero.getHeroClass()} lvl. ${hero.getLevel()})`}
-                </label>
+                {/* Hero Information and Sprite Sheet */}
+                <div className="hero-info">
+                  <label>
+                    <input
+                      type="radio"
+                      value={hero.getId()}
+                      checked={selectedHeroId === hero.getId()}
+                      onChange={() => setSelectedHeroId(hero.getId())}
+                    />
+                    <div className="hero-details">
+                      <p>
+                        <strong>{hero.getName()}</strong>
+                      </p>
+                      <p>{`${hero.getHeroClass()} (lvl. ${hero.getLevel()})`}</p>
+                    </div>
+                  </label>
+                </div>
+
+                {/* Sprite Sheet Image */}
+                <img
+                  src={
+                    Config.urls.server +
+                    Config.paths.charactersFolder +
+                    "icons/" +
+                    hero.getHeroClass().toLowerCase() +
+                    "_" +
+                    (hero.getSex() === HeroSex.Male ? "m" : "f") +
+                    ".png"
+                  }
+                  style={{ width: "48px", height: "64px" }}
+                  className="hero-icon"
+                />
+
+                {/* Delete Button */}
+                <button
+                  className="delete-button"
+                  onClick={() => handleDeleteHero(hero.getId())}
+                >
+                  🗑 Delete
+                </button>
               </div>
             ))}
           </div>

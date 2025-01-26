@@ -88,6 +88,24 @@
       }
     }
 
+    .delete-button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .delete-button:hover {
+      background-color: #e60000;
+    }
+
+    .delete-button:active {
+      transform: scale(0.95);
+    }
+
     button {
       width: 100%;
       padding: 10px;
