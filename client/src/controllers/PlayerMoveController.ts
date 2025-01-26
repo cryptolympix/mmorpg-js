@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useGameContext } from "../contexts/GameContext";
+import { io } from "socket.io-client";
+import Config from "../../../shared/config.json";
+import { HeroSchema } from "../../../shared/database.schemas";
+
+const socket = io(Config.urls.server);
 
 export function usePlayerMoveController() {
-  const { playerHero, currentWorld, currentMap, updateMap } = useGameContext();
+  const { playerHero, world, map, updateMap } = useGameContext();
   const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
   const pressedKeys = useRef<Set<string>>(new Set());
   const animationFrameRef = useRef<number | null>(null);
@@ -46,7 +51,7 @@ export function usePlayerMoveController() {
    * Updates the player's position based on the active keys.
    */
   const updatePlayerPosition = () => {
-    if (!playerHero || !currentWorld || !currentMap) return;
+    if (!playerHero || !world || !map) return;
 
     let dx = 0;
     let dy = 0;
@@ -77,11 +82,11 @@ export function usePlayerMoveController() {
       setPlayerPosition({ x: playerHero.getX(), y: playerHero.getY() });
 
       // Check if the player has moved to a new map
-      const nextMap = currentWorld.getMapByPosition(
+      const nextMap = world.getMapByPosition(
         playerHero.getX(),
         playerHero.getY()
       );
-      if (nextMap && currentMap !== nextMap) {
+      if (nextMap && map !== nextMap) {
         updateMap(nextMap);
       }
     }
@@ -106,7 +111,7 @@ export function usePlayerMoveController() {
         animationFrameRef.current = null;
       }
     };
-  }, [playerHero, currentWorld, currentMap]);
+  }, [playerHero, world, map]);
 
   /**
    * Checks if the player's collision box is within the bounds of the map.
@@ -119,12 +124,12 @@ export function usePlayerMoveController() {
     top: number;
     bottom: number;
   }) => {
-    if (!currentWorld || !currentMap) return false;
+    if (!world || !map) return false;
     const nextMap =
-      currentWorld.getMapByPosition(boxCollision.left, boxCollision.top) &&
-      currentWorld.getMapByPosition(boxCollision.right, boxCollision.bottom) &&
-      currentWorld.getMapByPosition(boxCollision.right, boxCollision.top) &&
-      currentWorld.getMapByPosition(boxCollision.left, boxCollision.bottom);
+      world.getMapByPosition(boxCollision.left, boxCollision.top) &&
+      world.getMapByPosition(boxCollision.right, boxCollision.bottom) &&
+      world.getMapByPosition(boxCollision.right, boxCollision.top) &&
+      world.getMapByPosition(boxCollision.left, boxCollision.bottom);
     return nextMap !== undefined;
   };
 
@@ -139,11 +144,11 @@ export function usePlayerMoveController() {
     top: number;
     bottom: number;
   }) => {
-    if (!currentWorld || !currentMap) return false;
-    for (let l = 0; l < currentMap.getNbLayers(); l++) {
+    if (!world || !map) return false;
+    for (let l = 0; l < map.getNbLayers(); l++) {
       for (let x = boxCollision.left; x < boxCollision.right; x++) {
         for (let y = boxCollision.top; y < boxCollision.bottom; y++) {
-          const tile = currentMap.getTileByPositionInPixels(x, y, l);
+          const tile = map.getTileByPositionInPixels(x, y, l);
           if (tile?.hasCollision()) return true;
         }
       }

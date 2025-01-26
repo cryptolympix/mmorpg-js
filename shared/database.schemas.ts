@@ -1,4 +1,4 @@
-import { Direction, HeroClass, HeroStuff, Stats } from "./types";
+import { Direction, HeroClass, HeroGender, HeroStuff, Stats } from "./types";
 
 export interface HeroSchema {
   id: string;
@@ -10,7 +10,7 @@ export interface HeroSchema {
   walking: boolean;
   spriteSheet: string;
   heroClass: HeroClass;
-  sex: string;
+  gender: HeroGender;
   experience: number;
   statsPoints: number;
   gold: number;

@@ -5,7 +5,7 @@ export enum Direction {
   Up = "up",
 }
 
-export enum HeroSex {
+export enum HeroGender {
   Male = "male",
   Female = "female",
 }

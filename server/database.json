@@ -1,1 +1,66 @@
-{}
+{
+  "1737909825929": {
+    "id": "1737909825929",
+    "name": "Maxime",
+    "x": 200,
+    "y": 200,
+    "direction": "down",
+    "world": "world-1",
+    "walking": false,
+    "spriteSheet": "http://localhost:3000/assets/characters/spritesheets/heroes/hunter_m.png",
+    "heroClass": "Hunter",
+    "sex": "male",
+    "experience": 0,
+    "statsPoints": 0,
+    "gold": 0,
+    "level": 1,
+    "stats": {
+      "health": 100,
+      "maxHealth": 100,
+      "mana": 100,
+      "maxMana": 100,
+      "attack": 10,
+      "defense": 5,
+      "magic": 10,
+      "resistance": 5,
+      "speed": 10,
+      "dodge": 5
+    },
+    "objects": [],
+    "stuffs": {},
+    "quests": [],
+    "skills": []
+  },
+  "1737910415815": {
+    "id": "1737910415815",
+    "name": "Christie",
+    "x": 200,
+    "y": 200,
+    "direction": "down",
+    "world": "world-1",
+    "walking": false,
+    "spriteSheet": "http://localhost:3000/assets/characters/spritesheets/heroes/druid_f.png",
+    "heroClass": "Druid",
+    "sex": "female",
+    "experience": 0,
+    "statsPoints": 0,
+    "gold": 0,
+    "level": 1,
+    "stats": {
+      "health": 100,
+      "maxHealth": 100,
+      "mana": 100,
+      "maxMana": 100,
+      "attack": 10,
+      "defense": 5,
+      "magic": 10,
+      "resistance": 5,
+      "speed": 10,
+      "dodge": 5
+    },
+    "objects": [],
+    "stuffs": {},
+    "quests": [],
+    "skills": []
+  }
+}

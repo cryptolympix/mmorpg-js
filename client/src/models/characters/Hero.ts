@@ -1,7 +1,8 @@
 import Fighter from "./Fighter";
 import Object from "../objects/Object";
 import World from "../map/World";
-import { HeroClass, HeroSex, HeroStuff } from "../../../../shared/types";
+import { HeroClass, HeroGender, HeroStuff } from "../../../../shared/types";
+import { HeroSchema } from "../../../../shared/database.schemas";
 
 function getExperienceForLevel(level: number): number {
   return level * 100;
@@ -30,7 +31,7 @@ export default class Hero extends Fighter {
   private statsPoints: number = 0; // Points to distribute to stats
   private gold: number = 0;
   private heroClass: HeroClass;
-  private sex: HeroSex;
+  private gender: HeroGender;
   private objects: Object[] = [];
   private stuff: HeroStuff = {};
 
@@ -43,17 +44,17 @@ export default class Hero extends Fighter {
    * @param world - The world the hero belongs to.
    * @param spriteSheetFilePath - Path to the sprite sheet image.
    * @param heroClass - The class of the hero.
-   * @param sex - The sex of the hero.
+   * @param gender - The gender of the hero.
    */
   constructor(
     id: string,
     name: string,
     x: number,
     y: number,
-    world: World,
+    world: string,
     spriteSheetFilePath: string,
     heroClass: HeroClass,
-    sex: HeroSex
+    gender: HeroGender
   ) {
     super(
       id,
@@ -71,7 +72,7 @@ export default class Hero extends Fighter {
     );
     this.world = world;
     this.heroClass = heroClass;
-    this.sex = sex;
+    this.gender = gender;
   }
 
   public async load() {
@@ -144,12 +145,30 @@ export default class Hero extends Fighter {
 
   public removeStuff(stuffId: string): void {}
 
+  public update(schema: HeroSchema): void {
+    this.name = schema.name;
+    this.x = schema.x;
+    this.y = schema.y;
+    this.direction = schema.direction;
+    this.walking = schema.walking;
+    this.heroClass = schema.heroClass;
+    this.gender = schema.gender;
+    this.experience = schema.experience;
+    this.experienceAtCurrentLevel =
+      schema.experience - getExperienceForLevel(schema.level - 1);
+    this.experienceToNextLevel = getExperienceForLevel(schema.level);
+    this.statsPoints = schema.statsPoints;
+    this.gold = schema.gold;
+    this.level = schema.level;
+    this.stats = schema.stats;
+  }
+
   public getLevel(): number {
     return this.level;
   }
 
-  public getSex(): HeroSex {
-    return this.sex;
+  public getGender(): HeroGender {
+    return this.gender;
   }
 
   public getExperience(): number {
@@ -182,5 +201,51 @@ export default class Hero extends Fighter {
 
   public getStuff(): HeroStuff {
     return this.stuff;
+  }
+
+  static fromSchema(schema: HeroSchema): Hero {
+    const hero = new Hero(
+      schema.id,
+      schema.name,
+      schema.x,
+      schema.y,
+      schema.world,
+      schema.spriteSheet,
+      schema.heroClass,
+      schema.gender
+    );
+    hero.experience = schema.experience;
+    hero.experienceAtCurrentLevel =
+      schema.experience - getExperienceForLevel(schema.level - 1);
+    hero.experienceToNextLevel = getExperienceForLevel(schema.level);
+    hero.statsPoints = schema.statsPoints;
+    hero.gold = schema.gold;
+    hero.level = schema.level;
+    hero.stats = schema.stats;
+    return hero;
+  }
+
+  public toSchema(): HeroSchema {
+    return {
+      id: this.id,
+      name: this.name,
+      x: this.x,
+      y: this.y,
+      direction: this.direction,
+      world: this.world,
+      walking: this.walking,
+      spriteSheet: this.spriteSheet.getFilePath(),
+      heroClass: this.heroClass,
+      gender: this.gender,
+      experience: this.experience,
+      statsPoints: this.statsPoints,
+      gold: this.gold,
+      level: this.level,
+      stats: this.stats,
+      objects: this.objects.map((o) => o.getId()),
+      stuffs: this.stuff,
+      quests: [],
+      skills: [],
+    };
   }
 }

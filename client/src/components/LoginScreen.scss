@@ -127,6 +127,10 @@
         cursor: not-allowed;
       }
     }
+
+    .hero-icon {
+      pointer-events: none;
+    }
   }
 
   @keyframes fadeIn {

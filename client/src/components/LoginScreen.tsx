@@ -5,7 +5,7 @@ import * as HeroApi from "../api/heroes.api";
 import Hero from "../models/characters/Hero";
 import { useGameContext } from "../contexts/GameContext";
 import World from "../models/map/World";
-import { HeroSex, HeroClass } from "../../../shared/types";
+import { HeroGender, HeroClass } from "../../../shared/types";
 
 interface LoginScreenProps {}
 
@@ -15,7 +15,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
   const [isCreatingHero, setIsCreatingHero] = useState(false);
   const [newHeroName, setNewHeroName] = useState<string>("");
   const [newHeroClass, setNewHeroClass] = useState<HeroClass | null>(null);
-  const [newHeroSex, setNewHeroSex] = useState<HeroSex | null>(null);
+  const [newHeroSex, setNewHeroSex] = useState<HeroGender | null>(null);
   const { updatePlayerHero } = useGameContext();
 
   const fetchHeroes = async () => {
@@ -29,10 +29,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
           heroData.name,
           heroData.x,
           heroData.y,
-          new World(heroData.world),
+          heroData.world,
           heroData.spriteSheet,
           heroData.heroClass as HeroClass,
-          heroData.sex as HeroSex
+          heroData.gender as HeroGender
         );
         await hero.load();
 
@@ -75,7 +75,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
       Config.urls.server +
       Config.paths.charactersSpritesheetsFolder +
       `heroes/${newHeroClass.toLowerCase()}_${
-        newHeroSex === HeroSex.Male ? "m" : "f"
+        newHeroSex === HeroGender.Male ? "m" : "f"
       }.png`;
 
     const newHero = new Hero(
@@ -83,7 +83,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
       newHeroName,
       startPoint.x,
       startPoint.y,
-      initialWorld,
+      initialWorld.getName(),
       spriteSheetUrl,
       newHeroClass,
       newHeroSex
@@ -172,23 +172,23 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
           {/* Hero Sex Selection */}
           <p className="instruction">Select your hero's gender:</p>
           <div className="choice-container">
-            {Object.values(HeroSex).map((heroSex) => (
+            {Object.values(HeroGender).map((heroGender) => (
               <div
-                key={heroSex}
+                key={heroGender}
                 className={`choice-box ${
-                  newHeroSex === heroSex ? "selected" : ""
+                  newHeroSex === heroGender ? "selected" : ""
                 }`}
-                onClick={() => setNewHeroSex(heroSex)}
+                onClick={() => setNewHeroSex(heroGender)}
               >
                 <label>
                   <input
                     type="radio"
-                    name="heroSex"
-                    value={heroSex}
-                    checked={newHeroSex === heroSex}
-                    onChange={() => setNewHeroSex(heroSex)}
+                    name="heroGender"
+                    value={heroGender}
+                    checked={newHeroSex === heroGender}
+                    onChange={() => setNewHeroSex(heroGender)}
                   />
-                  {heroSex === HeroSex.Male ? "♂ Male" : "♀ Female"}
+                  {heroGender === HeroGender.Male ? "♂ Male" : "♀ Female"}
                 </label>
               </div>
             ))}
@@ -213,26 +213,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
                 className={`choice-box ${
                   selectedHeroId === hero.getId() ? "selected" : ""
                 }`}
+                onClick={() => setSelectedHeroId(hero.getId())}
               >
-                {/* Hero Information and Sprite Sheet */}
-                <div className="hero-info">
-                  <label>
-                    <input
-                      type="radio"
-                      value={hero.getId()}
-                      checked={selectedHeroId === hero.getId()}
-                      onChange={() => setSelectedHeroId(hero.getId())}
-                    />
-                    <div className="hero-details">
-                      <p>
-                        <strong>{hero.getName()}</strong>
-                      </p>
-                      <p>{`${hero.getHeroClass()} (lvl. ${hero.getLevel()})`}</p>
-                    </div>
-                  </label>
-                </div>
-
-                {/* Sprite Sheet Image */}
+                <label>
+                  <input
+                    type="radio"
+                    value={hero.getId()}
+                    checked={selectedHeroId === hero.getId()}
+                    onChange={() => setSelectedHeroId(hero.getId())}
+                  />
+                  <div className="hero-details">
+                    <p>
+                      <strong>{hero.getName()}</strong>
+                    </p>
+                    <p>{`${hero.getHeroClass()} (lvl. ${hero.getLevel()})`}</p>
+                  </div>
+                </label>
                 <img
                   src={
                     Config.urls.server +
@@ -240,23 +236,25 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
                     "icons/" +
                     hero.getHeroClass().toLowerCase() +
                     "_" +
-                    (hero.getSex() === HeroSex.Male ? "m" : "f") +
+                    (hero.getGender() === HeroGender.Male ? "m" : "f") +
                     ".png"
                   }
                   style={{ width: "48px", height: "64px" }}
                   className="hero-icon"
                 />
-
-                {/* Delete Button */}
                 <button
                   className="delete-button"
-                  onClick={() => handleDeleteHero(hero.getId())}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents the button click from deselecting the hero
+                    handleDeleteHero(hero.getId());
+                  }}
                 >
                   🗑 Delete
                 </button>
               </div>
             ))}
           </div>
+
           <button onClick={handleSelectHero} disabled={!selectedHeroId}>
             Start Game
           </button>
