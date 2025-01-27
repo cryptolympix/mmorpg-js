@@ -23,19 +23,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
     const fetchedHeroes: Hero[] = [];
 
     await Promise.all(
-      heroesData.map(async (heroData) => {
-        const hero = new Hero(
-          heroData.id,
-          heroData.name,
-          heroData.x,
-          heroData.y,
-          heroData.world,
-          heroData.spriteSheet,
-          heroData.heroClass as HeroClass,
-          heroData.gender as HeroGender
-        );
+      heroesData.map(async (hero) => {
         await hero.load();
-
         if (!fetchedHeroes.some((h) => h.getId() === hero.getId())) {
           fetchedHeroes.push(hero);
         }

@@ -6,6 +6,7 @@ export interface HeroSchema {
   x: number;
   y: number;
   direction: Direction;
+  currentAnimationFrameIndex: number;
   world: string;
   walking: boolean;
   spriteSheet: string;

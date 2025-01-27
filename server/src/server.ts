@@ -88,9 +88,6 @@ io.on("connection", (socket: Socket) => {
     socket.join(world);
     console.log(`Player ${playerData.id} joined world ${world}`);
 
-    // Notify the player of the current players in the world
-    socket.emit("current-players", Object.values(playersByWorld[world]));
-
     // Notify other players in the room about the new player
     socket.to(world).emit("player-joined", playerData);
   });
@@ -106,6 +103,8 @@ io.on("connection", (socket: Socket) => {
 
       // Broadcast the updated player data to others in the room
       socket.to(world).emit("player-updated", playerData);
+
+      console.log(Object.keys(playersByWorld[world]));
     }
   });
 
@@ -120,14 +119,14 @@ io.on("connection", (socket: Socket) => {
           console.log(`Player ${playerData.id} saved to database`);
         });
 
+        // Notify others in the room about the player leaving
+        socket.to(world).emit("player-disconnected", playerData.id);
+
         delete players[socket.id];
 
         console.log(
           `Player with socket ${socket.id} disconnected from world ${world}`
         );
-
-        // Notify others in the room about the player leaving
-        socket.to(world).emit("player-disconnected", playerData.id);
 
         // Clean up the room if empty
         if (Object.keys(players).length === 0) delete playersByWorld[world];

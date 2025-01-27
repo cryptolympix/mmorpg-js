@@ -13,7 +13,7 @@ const GameScreen: React.FC<GameScreenProps> = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [camera, setCamera] = useState<Camera | null>(null);
 
-  const { playerHero, otherPlayersHero, world, map } = useGameContext();
+  const { playerHero, otherPlayersHero, map } = useGameContext();
 
   // Player movement controller
   usePlayerMoveController();
@@ -21,10 +21,6 @@ const GameScreen: React.FC<GameScreenProps> = () => {
   // Set up the camera
   useEffect(() => {
     if (!map || !playerHero) return;
-
-    if (Config.dev.debug) {
-      console.log("Setting up camera");
-    }
     setCamera(new Camera(playerHero, map));
   }, [map, playerHero]);
 
@@ -37,14 +33,30 @@ const GameScreen: React.FC<GameScreenProps> = () => {
 
     const render = () => {
       const allCharacters = [playerHero, ...otherPlayersHero];
-      const allCharactersLoaded = allCharacters.every((c) => c.isLoaded());
+      const loadedCharacters = allCharacters.filter((c) => c.isLoaded());
 
-      if (allCharactersLoaded) {
-        camera.render(allCharacters, context);
-        requestAnimationFrame(render);
-      } else if (Config.dev.debug) {
-        console.warn("Not all characters are loaded yet");
+      // Clear the canvas
+      context.clearRect(
+        0,
+        0,
+        canvasRef.current!.width,
+        canvasRef.current!.height
+      );
+
+      // Render only loaded characters
+      if (loadedCharacters.length > 0) {
+        camera.render(loadedCharacters, context);
       }
+
+      // Log a warning if some characters are not loaded
+      if (Config.dev.debug && loadedCharacters.length < allCharacters.length) {
+        console.warn(
+          `Some characters are not loaded yet. Loaded: ${loadedCharacters.length}, Total: ${allCharacters.length}`
+        );
+      }
+
+      // Continue the game loop
+      requestAnimationFrame(render);
     };
 
     render(); // Start the game loop

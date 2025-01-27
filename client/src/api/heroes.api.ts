@@ -3,12 +3,12 @@ import Config from "../../../shared/config.json";
 import Hero from "../models/characters/Hero";
 import { HeroSchema } from "../../../shared/database.schemas";
 
-export async function getHeroes(): Promise<HeroSchema[]> {
+export async function getHeroes(): Promise<Hero[]> {
   return axios.get(Config.urls.server + "/api/heroes").then((response) => {
     if (response.status === 200) {
       let data = [];
       for (let key in response.data) {
-        data.push(response.data[key]);
+        data.push(Hero.fromSchema(response.data[key]));
       }
       if (Config.dev.debug) {
         console.log(`Api getHeroes: ${data.length} heroes fetched`);
@@ -20,7 +20,7 @@ export async function getHeroes(): Promise<HeroSchema[]> {
   });
 }
 
-export async function getHero(heroId: string): Promise<HeroSchema> {
+export async function getHero(heroId: string): Promise<Hero> {
   return axios
     .get(Config.urls.server + "/api/heroes/" + heroId)
     .then((response) => {
@@ -28,7 +28,7 @@ export async function getHero(heroId: string): Promise<HeroSchema> {
         if (Config.dev.debug) {
           console.log(`Api getHero: hero ${heroId} fetched`);
         }
-        return response.data;
+        return Hero.fromSchema(response.data);
       } else {
         throw new Error(`Failed to get hero ${heroId}`);
       }
@@ -36,37 +36,8 @@ export async function getHero(heroId: string): Promise<HeroSchema> {
 }
 
 export async function createHero(hero: Hero): Promise<string> {
-  const heroData: HeroSchema = {
-    id: hero.getId(),
-    name: hero.getName(),
-    x: hero.getX(),
-    y: hero.getY(),
-    direction: hero.getDirection(),
-    world: hero.getWorld(),
-    walking: hero.isWalking(),
-    spriteSheet: hero.getSpriteSheet().getFilePath(),
-    heroClass: hero.getHeroClass(),
-    gender: hero.getGender(),
-    experience: hero.getExperience(),
-    statsPoints: hero.getStatsPoints(),
-    gold: hero.getGold(),
-    level: hero.getLevel(),
-    stats: hero.getStats(),
-    objects: hero.getObjects().map((o) => o.getId()),
-    stuffs: {
-      helmet: hero.getStuff().helmet,
-      armor: hero.getStuff().armor,
-      weapon: hero.getStuff().weapon,
-      shield: hero.getStuff().shield,
-      boots: hero.getStuff().boots,
-      gloves: hero.getStuff().gloves,
-      pants: hero.getStuff().pants,
-    },
-    quests: [],
-    skills: [],
-  };
   return axios
-    .post(Config.urls.server + "/api/heroes", heroData)
+    .post(Config.urls.server + "/api/heroes", hero.toSchema())
     .then((response) => {
       if (response.status === 201) {
         if (Config.dev.debug) {
@@ -82,37 +53,8 @@ export async function createHero(hero: Hero): Promise<string> {
 }
 
 export async function updateHero(hero: Hero): Promise<void> {
-  const heroData: HeroSchema = {
-    id: hero.getId(),
-    name: hero.getName(),
-    x: hero.getX(),
-    y: hero.getY(),
-    direction: hero.getDirection(),
-    world: hero.getWorld(),
-    walking: hero.isWalking(),
-    spriteSheet: hero.getSpriteSheet().getFilePath(),
-    heroClass: hero.getHeroClass(),
-    gender: hero.getGender(),
-    experience: hero.getExperience(),
-    statsPoints: hero.getStatsPoints(),
-    gold: hero.getGold(),
-    level: hero.getLevel(),
-    stats: hero.getStats(),
-    objects: hero.getObjects().map((o) => o.getId()),
-    stuffs: {
-      helmet: hero.getStuff().helmet,
-      armor: hero.getStuff().armor,
-      weapon: hero.getStuff().weapon,
-      shield: hero.getStuff().shield,
-      boots: hero.getStuff().boots,
-      gloves: hero.getStuff().gloves,
-      pants: hero.getStuff().pants,
-    },
-    quests: [],
-    skills: [],
-  };
   return axios
-    .put(Config.urls.server + "/api/heroes/" + hero.getId(), heroData)
+    .put(Config.urls.server + "/api/heroes/" + hero.getId(), hero.toSchema())
     .then((response) => {
       if (response.status === 204) {
         if (Config.dev.debug) {

@@ -22,7 +22,7 @@ export default class Character {
   protected spriteSheet: SpriteSheet;
   protected moveSpeed: number = Character.DEFAULT_MOVE_SPEED;
   protected walking: boolean = false;
-  protected currentFrameIndex: number = 0;
+  protected currentAnimationFrameIndex: number = 0;
   protected lastFrameTime: number = 0; // Temps de la dernière mise à jour en ms
   protected frameInterval: number = Character.DEFAULT_FRAME_INTERVAL; // Intervalle minimum entre frames en ms
 
@@ -95,12 +95,13 @@ export default class Character {
     if (this.walking) {
       // Vérifie si suffisamment de temps s'est écoulé depuis la dernière mise à jour
       if (currentTime - this.lastFrameTime >= this.frameInterval) {
-        this.currentFrameIndex =
-          (this.currentFrameIndex + 1) % Character.DEFAULT_SPRITE_SHEET_COLUMNS;
+        this.currentAnimationFrameIndex =
+          (this.currentAnimationFrameIndex + 1) %
+          Character.DEFAULT_SPRITE_SHEET_COLUMNS;
         this.lastFrameTime = currentTime; // Met à jour le dernier temps
       }
     } else {
-      this.currentFrameIndex = this.inactiveFrameIndex;
+      this.currentAnimationFrameIndex = this.inactiveFrameIndex;
     }
   }
 
@@ -219,7 +220,7 @@ export default class Character {
    */
   public getAnimationFrame() {
     const tileIndex =
-      this.animationFrames[this.direction][this.currentFrameIndex];
+      this.animationFrames[this.direction][this.currentAnimationFrameIndex];
     return this.spriteSheet.getTile(tileIndex);
   }
 

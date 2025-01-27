@@ -150,6 +150,7 @@ export default class Hero extends Fighter {
     this.x = schema.x;
     this.y = schema.y;
     this.direction = schema.direction;
+    this.currentAnimationFrameIndex = schema.currentAnimationFrameIndex;
     this.walking = schema.walking;
     this.heroClass = schema.heroClass;
     this.gender = schema.gender;
@@ -214,6 +215,7 @@ export default class Hero extends Fighter {
       schema.heroClass,
       schema.gender
     );
+    hero.currentAnimationFrameIndex = schema.currentAnimationFrameIndex;
     hero.experience = schema.experience;
     hero.experienceAtCurrentLevel =
       schema.experience - getExperienceForLevel(schema.level - 1);
@@ -232,6 +234,7 @@ export default class Hero extends Fighter {
       x: this.x,
       y: this.y,
       direction: this.direction,
+      currentAnimationFrameIndex: this.currentAnimationFrameIndex,
       world: this.world,
       walking: this.walking,
       spriteSheet: this.spriteSheet.getFilePath(),

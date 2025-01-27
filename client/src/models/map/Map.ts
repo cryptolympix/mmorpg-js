@@ -128,6 +128,23 @@ export default class Map {
         throw new Error(`Invalid layer data in map: ${this.filePath}`);
       }
 
+      // Check the name of the layers
+      const authorizedLayerName = [
+        "Base",
+        "Ground",
+        "Water",
+        "Paths",
+        "Overlay 1",
+        "Overlay 2",
+        "Overlay 3",
+        "Characters",
+      ];
+      if (!authorizedLayerName.includes(layerName)) {
+        throw new Error(
+          `Invalid layer name in the map ${this.name}. Layer name must be one of [${authorizedLayerName}]`
+        );
+      }
+
       const tileIds = layerData.split(",").map((id) => parseInt(id, 10));
       const tileLayer = new TileLayer(
         layerId,

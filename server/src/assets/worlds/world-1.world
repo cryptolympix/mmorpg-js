@@ -9,9 +9,9 @@
         },
         {
             "fileName": "map-2.tmx",
-            "height": 640,
-            "width": 960,
-            "x": 480,
+            "height": 2560,
+            "width": 2560,
+            "x": -352,
             "y": 640
         }
     ],

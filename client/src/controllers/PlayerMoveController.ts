@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useGameContext } from "../contexts/GameContext";
+import Config from "../../../shared/config.json";
 
 export function usePlayerMoveController() {
   const { playerHero, world, map, updateMap } = useGameContext();
-  const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
   const pressedKeys = useRef<Set<string>>(new Set());
   const animationFrameRef = useRef<number | null>(null);
 
@@ -65,16 +65,19 @@ export function usePlayerMoveController() {
     };
 
     if (dx !== 0 || dy !== 0) {
-      if (
-        !checkMapBorders(nextBoxCollision) ||
-        checkCollision(nextBoxCollision)
-      ) {
+      const collisionDetected = checkCollision(nextBoxCollision);
+      const mapBordersReached = !checkMapBorders(nextBoxCollision);
+      if (mapBordersReached || collisionDetected) {
+        if (Config.dev.debug) {
+          console.log(
+            mapBordersReached ? "Map borders reached" : "Collision detected"
+          );
+        }
         return;
       }
 
       // Move the player
       playerHero.move(dx, dy);
-      setPlayerPosition({ x: playerHero.getX(), y: playerHero.getY() });
 
       // Check if the player has moved to a new map
       const nextMap = world.getMapByPosition(
