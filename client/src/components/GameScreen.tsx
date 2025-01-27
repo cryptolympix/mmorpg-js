@@ -12,7 +12,6 @@ interface GameScreenProps {}
 const GameScreen: React.FC<GameScreenProps> = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [camera, setCamera] = useState<Camera | null>(null);
-
   const { playerHero, otherPlayersHero, map } = useGameContext();
 
   // Player movement controller
@@ -62,19 +61,9 @@ const GameScreen: React.FC<GameScreenProps> = () => {
     render(); // Start the game loop
   }, [camera, playerHero, otherPlayersHero]);
 
-  if (!Config.common.gamescreen.width || !Config.common.gamescreen.height) {
-    throw new Error("Invalid Config: gamescreen width and height must be set");
-  }
-
-  const canvasWidth = Math.min(
-    Config.common.gamescreen.width,
-    map?.getWidthInPixels() || 0
-  );
-
-  const canvasHeight = Math.min(
-    Config.common.gamescreen.height,
-    map?.getHeightInPixels() || 0
-  );
+  // Set the canvas dimensions
+  const canvasWidth = Math.min(1800, map?.getWidthInPixels() || 0);
+  const canvasHeight = Math.min(1200, map?.getHeightInPixels() || 0);
 
   return (
     <div className="GameScreen">

@@ -103,8 +103,6 @@ io.on("connection", (socket: Socket) => {
 
       // Broadcast the updated player data to others in the room
       socket.to(world).emit("player-updated", playerData);
-
-      console.log(Object.keys(playersByWorld[world]));
     }
   });
 

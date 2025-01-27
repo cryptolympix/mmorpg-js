@@ -78,15 +78,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({}) => {
       newHeroSex
     );
 
-    await newHero.load();
-    HeroApi.createHero(newHero)
-      .then((createdHeroId) => {
-        setSelectedHeroId(createdHeroId);
-        updatePlayerHero(newHero);
-      })
-      .catch((error) => {
-        alert(error.response.data);
-      });
+    try {
+      await newHero.load();
+      const createdHeroId = await HeroApi.createHero(newHero);
+      setSelectedHeroId(createdHeroId);
+      updatePlayerHero(newHero);
+    } catch (error) {
+      alert(error.response.data);
+    }
   };
 
   const handleDeleteHero = async (heroId: string) => {

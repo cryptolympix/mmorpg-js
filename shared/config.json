@@ -1,6 +1,6 @@
 {
   "urls": {
-    "client": "http://localhost:5173",
+    "client": "http://localhost:8080",
     "server": "http://localhost:3000"
   },
   "paths": {
@@ -11,16 +11,12 @@
     "musicFolder": "/assets/musics/"
   },
   "common": {
-    "title": "MMORPG",
-    "gamescreen": {
-      "width": 1200,
-      "height": 800
-    }
+    "title": "MMORPG"
   },
   "start": {
     "world": "world-1"
   },
   "dev": {
-    "debug": true
+    "debug": false
   }
 }

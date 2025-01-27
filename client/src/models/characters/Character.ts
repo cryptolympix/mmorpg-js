@@ -133,14 +133,6 @@ export default class Character {
     cameraOffsetX: number,
     cameraOffsetY: number
   ) {
-    // context.fillStyle = "red";
-    // context.fillRect(
-    //   this.x - this.width / 2 + cameraOffsetX,
-    //   this.y - this.height + cameraOffsetY,
-    //   this.width,
-    //   this.height
-    // );
-
     // Draw the character's current animation frame
     context.drawImage(
       this.getAnimationFrame(),
