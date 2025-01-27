@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useGameContext } from "../contexts/GameContext";
-import { io } from "socket.io-client";
-import Config from "../../../shared/config.json";
-import { HeroSchema } from "../../../shared/database.schemas";
-
-const socket = io(Config.urls.server);
 
 export function usePlayerMoveController() {
   const { playerHero, world, map, updateMap } = useGameContext();

@@ -2,7 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import Hero from "../models/characters/Hero";
 import World from "../models/map/World";
 import Map from "../models/map/Map";
+import { io } from "socket.io-client";
 import Config from "../../../shared/config.json";
+import { HeroSchema } from "../../../shared/database.schemas";
+
+// Connect to the Socket.IO server
+const socket = io(Config.urls.server);
 
 interface GameContextValue {
   playerHero: Hero | null; // The current player's hero
@@ -12,8 +17,6 @@ interface GameContextValue {
   updatePlayerHero: (playerHero: Hero) => void; // Function to update the player's hero
   updateWorld: (newWorld: World) => void; // Function to update the current world
   updateMap: (newMap: Map) => void; // Function to update the current map
-  addOtherPlayerHeroe: (hero: Hero) => void; // Function to add other players' heroes
-  removeOtherPlayerHero: (hero: Hero) => void; // Function to remove other players' heroes
 }
 
 const GameContext = createContext<GameContextValue>({
@@ -24,8 +27,6 @@ const GameContext = createContext<GameContextValue>({
   updatePlayerHero: () => {},
   updateWorld: () => {},
   updateMap: () => {},
-  addOtherPlayerHeroe: () => {},
-  removeOtherPlayerHero: () => {},
 });
 
 export const useGameContext = () => useContext(GameContext);
@@ -60,6 +61,86 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
     loadPlayerWorld();
   }, [playerHero]);
 
+  // Send player updates to the server
+  useEffect(() => {
+    if (!playerHero) return;
+
+    const interval = setInterval(() => {
+      socket.emit("update-player", playerHero.toSchema());
+    }, 10);
+
+    return () => clearInterval(interval);
+  }, [playerHero]);
+
+  // Listen for updates from the server
+  useEffect(() => {
+    if (!playerHero) return;
+
+    socket.on("current-players", async (currentPlayers: HeroSchema[]) => {
+      if (Config.dev.debug) {
+        console.log("Current players:", currentPlayers);
+      }
+      currentPlayers.forEach(async (playerData) => {
+        if (playerData.id !== playerHero.getId()) {
+          const player = Hero.fromSchema(playerData);
+          await player.load();
+          addOtherPlayerHeroe(player);
+        }
+      });
+    });
+
+    socket.on("player-joined", async (playerData: HeroSchema) => {
+      if (playerData.id !== playerHero.getId()) {
+        if (Config.dev.debug) {
+          console.log("Player joined:", playerData);
+        }
+        const player = Hero.fromSchema(playerData);
+        await player.load();
+        addOtherPlayerHeroe(player);
+      }
+    });
+
+    socket.on("player-updated", async (playerData: HeroSchema) => {
+      if (playerData.id !== playerHero.getId()) {
+        const player = otherPlayersHero.find(
+          (p) => p.getId() === playerData.id
+        );
+        if (player) {
+          player.update(playerData);
+        } else {
+          const player = Hero.fromSchema(playerData);
+          await player.load();
+          addOtherPlayerHeroe(player);
+        }
+      }
+    });
+
+    socket.on("player-disconnected", (playerId: string) => {
+      const player = otherPlayersHero.find((p) => p.getId() === playerId);
+      if (player) {
+        removeOtherPlayerHero(player);
+      }
+    });
+
+    return () => {
+      socket.off("current-players");
+      socket.off("player-joined");
+      socket.off("player-updated");
+      socket.off("player-disconnected");
+    };
+  }, [playerHero, otherPlayersHero]);
+
+  // Check when world change
+  useEffect(() => {
+    if (!world || !playerHero) return;
+
+    socket.emit("join-world", playerHero.toSchema());
+
+    return () => {
+      socket.off("current-players");
+    };
+  }, [world, playerHero]);
+
   const updatePlayerHero = (playerHero: Hero) => {
     setPlayerHero(playerHero);
   };
@@ -73,10 +154,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const addOtherPlayerHeroe = (hero: Hero) => {
-    if (otherPlayersHero.some((p) => p.getId() === hero.getId())) {
-      return;
+    if (!otherPlayersHero.some((p) => p.getId() === hero.getId())) {
+      setOtherPlayersHero((prev) => [...prev, hero]);
     }
-    setOtherPlayersHero((prev) => [...prev, hero]);
   };
 
   const removeOtherPlayerHero = (hero: Hero) => {
@@ -102,8 +182,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({
         updatePlayerHero,
         updateWorld,
         updateMap,
-        addOtherPlayerHeroe,
-        removeOtherPlayerHero,
       }}
     >
       {children}
