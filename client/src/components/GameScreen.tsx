@@ -20,12 +20,13 @@ const GameScreen: React.FC<GameScreenProps> = () => {
 
   // Set up the camera
   useEffect(() => {
-    if (!world || !map || !playerHero || !canvasRef.current) return;
+    if (!map || !playerHero) return;
 
-    if (!camera) {
-      setCamera(new Camera(playerHero, map));
+    if (Config.dev.debug) {
+      console.log("Setting up camera");
     }
-  }, [world, map, playerHero]); // Avoid recreating the camera unnecessarily
+    setCamera(new Camera(playerHero, map));
+  }, [map, playerHero]);
 
   // Render the map and hero
   useEffect(() => {

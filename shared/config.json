@@ -21,6 +21,6 @@
     "world": "world-1"
   },
   "dev": {
-    "debug": false
+    "debug": true
   }
 }

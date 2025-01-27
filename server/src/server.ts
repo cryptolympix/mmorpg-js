@@ -6,7 +6,7 @@ import Config from "../../shared/config.json";
 
 import app from "./app";
 
-import "./database";
+import { database } from "./database";
 import { HeroSchema } from "./database";
 
 const appDirectory = fs.realpathSync(process.cwd());
@@ -72,7 +72,7 @@ const io: Socket = require("socket.io")(server, {
 const playersByWorld: { [world: string]: { [id: string]: HeroSchema } } = {};
 
 io.on("connection", (socket: Socket) => {
-  console.log(`Player connected: ${socket.id}`);
+  console.log(`Player connected with socket: ${socket.id}`);
 
   // Join a specific world
   socket.on("join-world", (playerData: HeroSchema) => {
@@ -86,7 +86,7 @@ io.on("connection", (socket: Socket) => {
     playersByWorld[world][socket.id] = playerData;
 
     socket.join(world);
-    console.log(`Player ${socket.id} joined world ${world}`);
+    console.log(`Player ${playerData.id} joined world ${world}`);
 
     // Notify the player of the current players in the world
     socket.emit("current-players", Object.values(playersByWorld[world]));
@@ -102,7 +102,7 @@ io.on("connection", (socket: Socket) => {
     if (playersByWorld[world] && playersByWorld[world][socket.id]) {
       playersByWorld[world][socket.id] = playerData;
 
-      console.log(`Player ${socket.id} updated in world ${world}`);
+      console.log(`Player ${playerData.id} updated in world ${world}`);
 
       // Broadcast the updated player data to others in the room
       socket.to(world).emit("player-updated", playerData);
@@ -115,8 +115,16 @@ io.on("connection", (socket: Socket) => {
     for (const [world, players] of Object.entries(playersByWorld)) {
       if (players[socket.id]) {
         const playerData = players[socket.id];
+
+        database.push(`heroes/${playerData.id}`, playerData, false).then(() => {
+          console.log(`Player ${playerData.id} saved to database`);
+        });
+
         delete players[socket.id];
-        console.log(`Player ${socket.id} disconnected from world ${world}`);
+
+        console.log(
+          `Player with socket ${socket.id} disconnected from world ${world}`
+        );
 
         // Notify others in the room about the player leaving
         socket.to(world).emit("player-disconnected", playerData.id);

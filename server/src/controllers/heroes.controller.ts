@@ -65,7 +65,7 @@ export function updateHero(req: Request, res: Response) {
   const { id } = req.params;
   const hero: HeroSchema = req.body;
   database
-    .push(`heroes/${id}`, hero, false)
+    .push(`heroes/${id}`, hero, true)
     .then(() => {
       res.status(204).send();
     })
