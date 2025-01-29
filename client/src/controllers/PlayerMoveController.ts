@@ -3,7 +3,8 @@ import { useGameContext } from "../contexts/GameContext";
 import Config from "../../../shared/config.json";
 
 export function usePlayerMoveController() {
-  const { playerHero, world, map, updateMap } = useGameContext();
+  const { playerHero, otherPlayersHero, world, map, updateMap } =
+    useGameContext();
   const pressedKeys = useRef<Set<string>>(new Set());
   const animationFrameRef = useRef<number | null>(null);
 
@@ -109,7 +110,7 @@ export function usePlayerMoveController() {
         animationFrameRef.current = null;
       }
     };
-  }, [playerHero, world, map]);
+  }, [playerHero, otherPlayersHero, world, map]);
 
   /**
    * Checks if the player's collision box is within the bounds of the map.
@@ -143,6 +144,8 @@ export function usePlayerMoveController() {
     bottom: number;
   }) => {
     if (!world || !map) return false;
+
+    // Check the collision with the map tiles
     for (let l = 0; l < map.getNbLayers(); l++) {
       for (let x = boxCollision.left; x < boxCollision.right; x++) {
         for (let y = boxCollision.top; y < boxCollision.bottom; y++) {
@@ -151,6 +154,22 @@ export function usePlayerMoveController() {
         }
       }
     }
+
+    // Check the collision with other players
+    if (otherPlayersHero) {
+      for (const otherPlayer of otherPlayersHero) {
+        const otherPlayerBox = otherPlayer.boxCollision();
+        if (
+          boxCollision.left < otherPlayerBox.right &&
+          boxCollision.right > otherPlayerBox.left &&
+          boxCollision.top < otherPlayerBox.bottom &&
+          boxCollision.bottom > otherPlayerBox.top
+        ) {
+          return true;
+        }
+      }
+    }
+
     return false;
   };
 }
