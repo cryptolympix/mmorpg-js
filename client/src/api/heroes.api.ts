@@ -1,7 +1,6 @@
 import axios from "axios";
 import Config from "../../../shared/config.json";
 import Hero from "../models/characters/Hero";
-import { HeroSchema } from "../../../shared/database.schemas";
 
 export async function getHeroes(): Promise<Hero[]> {
   return axios.get(Config.urls.server + "/api/heroes").then((response) => {

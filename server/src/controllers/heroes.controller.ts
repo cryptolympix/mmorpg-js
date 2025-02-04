@@ -9,7 +9,7 @@ export function getHero(req: Request, res: Response) {
   }
   const { id } = req.params;
   database
-    .getData(`heroes/${id}`)
+    .getData(`/heroes/${id}`)
     .then((hero) => {
       res.status(200).json(hero);
     })
@@ -20,7 +20,7 @@ export function getHero(req: Request, res: Response) {
 
 export function getHeroes(req: Request, res: Response) {
   database
-    .getData("heroes")
+    .getData("/heroes")
     .then((heroes) => {
       res.status(200).json(heroes);
     })
@@ -32,29 +32,20 @@ export function getHeroes(req: Request, res: Response) {
 export function createHero(req: Request, res: Response) {
   const hero: HeroSchema = req.body;
 
-  // Check if the name of hero does not exist in the database
-  database
-    .getData("heroes")
-    .then((heroes) => {
-      const heroExists = Object.values(heroes).some(
-        (h: HeroSchema) => h.name === hero.name
-      );
-      if (heroExists) {
-        res.status(400).send("Hero name already exists");
-      } else {
-        database
-          .push(`heroes/${hero.id}`, hero)
-          .then(() => {
-            res.status(201).send(hero.id);
-          })
-          .catch((error) => {
-            throw error;
-          });
-      }
-    })
-    .catch((error) => {
-      res.status(404).send(error);
-    });
+  database.exists(`/heroes/${hero.id}`).then((exists) => {
+    if (!exists) {
+      database
+        .push(`/heroes/${hero.id}`, hero)
+        .then(() => {
+          res.status(201).send(hero.id);
+        })
+        .catch((error) => {
+          throw error;
+        });
+    } else {
+      res.status(400).send("Hero id already exists");
+    }
+  });
 }
 
 export function updateHero(req: Request, res: Response) {
@@ -65,7 +56,7 @@ export function updateHero(req: Request, res: Response) {
   const { id } = req.params;
   const hero: HeroSchema = req.body;
   database
-    .push(`heroes/${id}`, hero, true)
+    .push(`/heroes/${id}`, hero, true)
     .then(() => {
       res.status(204).send();
     })
@@ -81,7 +72,7 @@ export function deleteHero(req: Request, res: Response) {
   }
   const { id } = req.params;
   database
-    .delete(`heroes/${id}`)
+    .delete(`/heroes/${id}`)
     .then(() => {
       res.status(204).send();
     })
@@ -92,7 +83,7 @@ export function deleteHero(req: Request, res: Response) {
 
 export function deleteHeroes(req: Request, res: Response) {
   database
-    .delete("heroes")
+    .delete("/heroes")
     .then(() => {
       res.status(204).send();
     })

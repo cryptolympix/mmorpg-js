@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./GameScreen.scss";
 import Config from "../../../shared/config.json";
 import LoginScreen from "./LoginScreen";
+import Chat from "./Chat";
 import Camera from "../utils/Camera";
 import PlayerHud from "./PlayerHud";
 import { useGameContext } from "../contexts/GameContext";
@@ -75,6 +76,7 @@ const GameScreen: React.FC<GameScreenProps> = () => {
             width={canvasWidth}
             height={canvasHeight}
           ></canvas>
+          <Chat />
         </>
       ) : (
         <LoginScreen />

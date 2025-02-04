@@ -4,6 +4,7 @@ import path from "path";
 import cors from "cors";
 
 import heroesRoutes from "./routes/heroes.routes";
+import chatRoutes from "./routes/chat.routes";
 
 const appDirectory = fs.realpathSync(process.cwd());
 const sourceFolder = path.resolve(appDirectory, "src");
@@ -22,5 +23,6 @@ app.use(
 app.use(express.json());
 app.use("/assets", express.static(assetsFolder));
 app.use("/api/heroes", heroesRoutes);
+app.use("/api/chat", chatRoutes);
 
 export default app;

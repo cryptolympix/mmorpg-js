@@ -7,7 +7,7 @@ import Config from "../../shared/config.json";
 import app from "./app";
 
 import { database } from "./database";
-import { HeroSchema } from "./database";
+import { HeroSchema, ChatMessageSchema } from "./../../shared/database.schemas";
 
 const appDirectory = fs.realpathSync(process.cwd());
 export const sourceFolder = path.resolve(appDirectory, "src");
@@ -68,8 +68,8 @@ const io: Socket = require("socket.io")(server, {
   },
 });
 
-// Store players in memory per world
 const playersByWorld: { [world: string]: { [id: string]: HeroSchema } } = {};
+const chatMessages: ChatMessageSchema[] = [];
 
 io.on("connection", (socket: Socket) => {
   console.log(`Player connected with socket: ${socket.id}`);
@@ -106,6 +106,11 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
+  socket.on("post-chat-message", (message: ChatMessageSchema) => {
+    chatMessages.push(message);
+    io.emit("chat-message-posted", message);
+  });
+
   // Handle player disconnection
   socket.on("disconnect", () => {
     // Remove player from all worlds they belong to
@@ -113,9 +118,11 @@ io.on("connection", (socket: Socket) => {
       if (players[socket.id]) {
         const playerData = players[socket.id];
 
-        database.push(`heroes/${playerData.id}`, playerData, false).then(() => {
-          console.log(`Player ${playerData.id} saved to database`);
-        });
+        database
+          .push(`/heroes/${playerData.id}`, playerData, false)
+          .then(() => {
+            console.log(`Player ${playerData.id} saved to database`);
+          });
 
         // Notify others in the room about the player leaving
         socket.to(world).emit("player-disconnected", playerData.id);

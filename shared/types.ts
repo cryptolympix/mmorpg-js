@@ -51,3 +51,10 @@ export interface Stats {
   speed: number;
   dodge: number;
 }
+
+export interface ChatMessage {
+  id: string;
+  senderName: string;
+  text: string;
+  timestamp: number;
+}

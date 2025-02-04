@@ -22,3 +22,10 @@ export interface HeroSchema {
   quests: Array<string>;
   skills: Array<string>;
 }
+
+export interface ChatMessageSchema {
+  id: string;
+  heroId: string;
+  text: string;
+  timestamp: number;
+}
