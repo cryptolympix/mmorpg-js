@@ -1,0 +1,100 @@
+@use "sass:color";
+@use "./mixins.scss" as *;
+
+// Screen properties
+$app-screen-width: 100vw;
+$app-screen-height: 100vh;
+$app-background: #262223;
+
+// Color properties
+$activated-color: #4caf50;
+$delete-color: #ff4d4d;
+$background-color-dark: #333;
+$background-color-medium: #444;
+$background-color-light: #555;
+$background-color-lighter: #888;
+
+// Font properties
+$default-font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+// Login screen properties
+$login-screen-choice-box-background: $background-color-lighter;
+$login-screen-choice-box-hover-background: $background-color-light;
+
+// Chat component properties
+$chat-width: 300px;
+$chat-background: rgba(0, 0, 0, 0.5);
+$chat-send-button-background: $background-color-medium;
+$chat-messages-max-height: 200px;
+
+// Player HUD properties
+$player-hud-bar-width: 300px;
+$player-hud-bar-height: 25px;
+$player-hud-health-color: red;
+$player-hud-mana-color: blue;
+$player-hud-experience-color: green;
+
+// Mixins for styling
+
+@mixin h1-style {
+  @include font-style(#fff, $default-font-family, 3rem, 400, 1.5);
+}
+
+@mixin h2-style {
+  @include font-style(#fff, $default-font-family, 2rem, 400, 1.5);
+}
+
+@mixin label-style {
+  @include font-style(#fff, $default-font-family, 1rem, 400, 1.5);
+}
+
+@mixin p-style {
+  @include font-style(#fff, $default-font-family, 1rem, 400, 1.5);
+}
+
+@mixin input-style(
+  $width: auto,
+  $height: auto,
+  $background-color: rgba(255, 255, 255, 0.2)
+) {
+  @include dimensions($width, $height);
+  @include font-style(#fff, $default-font-family, 1rem, 400, 1.5);
+  padding: 10px;
+  background: $background-color;
+  outline: none;
+  transition: background 0.3s;
+  border: none;
+  border-radius: 3px;
+  box-sizing: border-box;
+  transition: all 0.3s;
+
+  &::placeholder {
+    color: color.adjust($background-color, $lightness: 50%);
+  }
+  &:focus {
+    background: color.adjust($background-color, $lightness: 5%);
+  }
+}
+
+@mixin button-style($width, $height, $background-color: transparent) {
+  @include dimensions($width, $height);
+  @include font-style(#fff, $default-font-family, 1rem, 400, 1.5);
+  background: $background-color;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 10px;
+  transition: all 0.3s;
+
+  &:hover {
+    background: color.adjust($background-color, $lightness: -5%);
+  }
+  &:disabled {
+    background: $background-color-lighter;
+    cursor: not-allowed;
+  }
+  &:active {
+    transform: scale(0.95);
+  }
+}

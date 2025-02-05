@@ -1,0 +1,49 @@
+@mixin dimensions($width, $height: auto) {
+  width: $width;
+  height: $height;
+}
+
+@mixin flexbox($direction, $justify-content: null, $align-items: null) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify-content;
+  align-items: $align-items;
+}
+
+@mixin position(
+  $position,
+  $top: null,
+  $right: null,
+  $bottom: null,
+  $left: null
+) {
+  position: $position;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}
+
+@mixin font-style(
+  $color,
+  $font-family,
+  $font-size,
+  $font-weight,
+  $line-height,
+  $text-shadow: none
+) {
+  color: $color;
+  font-family: $font-family;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  line-height: $line-height;
+  text-shadow: $text-shadow;
+}
+
+@mixin border-style($width, $style, $color, $radius: 0, $shadow: none) {
+  border-width: $width;
+  border-style: $style;
+  border-color: $color;
+  border-radius: $radius;
+  box-shadow: $shadow;
+}

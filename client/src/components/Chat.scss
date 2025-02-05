@@ -1,26 +1,23 @@
+@use "../theme.scss" as *;
+@use "../mixins.scss" as *;
+
 .Chat {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  @include position(absolute, null, 0, 0, null);
+  @include dimensions($chat-width);
+  @include flexbox(column);
+  @include p-style;
   padding: 10px;
-  width: 300px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  font-family: Arial, sans-serif;
+  background: $chat-background;
 
   &__messages {
-    max-height: 200px;
+    max-height: $chat-messages-max-height;
     overflow-y: auto;
-    background-color: transparent;
     border-radius: 5px;
     scroll-behavior: auto;
 
     div {
       padding: 5px;
       border-radius: 3px;
-      background-color: transparent;
       text-align: left;
     }
   }
@@ -31,21 +28,16 @@
 
     input {
       flex: 1;
-      padding: 5px;
-      border: 1px solid #555;
-      background-color: #333;
-      color: #fff;
-      border-radius: 3px;
+      background: red;
+      @include border-style(1px, solid, $background-color-light, 3px);
+      @include input-style(auto, 40px);
     }
 
     button {
       margin-left: 5px;
-      padding: 5px 10px;
-      background-color: #555;
-      color: #fff;
-      border: none;
       cursor: pointer;
-      border-radius: 3px;
+      @include border-style(1px, solid, $background-color-light, 3px);
+      @include button-style(auto, 40px, $chat-send-button-background);
     }
   }
 }

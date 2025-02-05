@@ -1,9 +1,9 @@
+@use "./theme.scss" as *;
+@use "./mixins.scss" as *;
+
 .App {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  text-align: center;
-  background: #262223;
+  @include dimensions($app-screen-width, $app-screen-height);
+  @include position(absolute, 50%, null, null, 50%);
+  background: $app-background;
+  transform: translate(-50%, -50%);
 }

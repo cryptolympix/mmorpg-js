@@ -14,7 +14,10 @@ interface ChatProps {}
 
 function timestampToString(timestamp: number): string {
   const date = new Date(timestamp);
-  return `${date.getHours()}:${date.getMinutes()}`;
+  // Display hours and minutes in the format HH:MM
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
 }
 
 const Chat: React.FC<ChatProps> = () => {
@@ -32,7 +35,10 @@ const Chat: React.FC<ChatProps> = () => {
           .map((msg) =>
             getHero(msg.heroId).then((hero) => ({
               id: msg.id,
-              senderName: hero.getName(),
+              senderName:
+                hero.getName() === playerHero.getName()
+                  ? "Moi"
+                  : hero.getName(),
               text: msg.text,
               timestamp: msg.timestamp,
             }))
@@ -89,7 +95,7 @@ const Chat: React.FC<ChatProps> = () => {
     };
     const newMsg: ChatMessage = {
       id: newMsgId,
-      senderName: newMsgHero.getName(),
+      senderName: "Moi",
       text: newMsgText,
       timestamp: newMsgTimestamp,
     };
