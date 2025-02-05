@@ -1,8 +1,8 @@
 import "./Chat.scss";
 import React, { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 import { ChatMessageSchema } from "../../../shared/database.schemas";
 import { ChatMessage } from "../../../shared/types";
-import { io } from "socket.io-client";
 import Config from "../../../shared/config.json";
 import { useGameContext } from "../contexts/GameContext";
 import { getHero } from "../api/heroes.api";
@@ -106,7 +106,10 @@ const Chat: React.FC<ChatProps> = () => {
         setMessages((prev) => [...prev, newMsg]);
         setInput("");
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error("Error posting chat message:" + err);
+        alert("Erreur lors de l'envoi du message");
+      });
   };
 
   return (
