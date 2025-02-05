@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 import Config from "../../../shared/config.json";
 import { useGameContext } from "../contexts/GameContext";
 import { getHero } from "../api/heroes.api";
-import { postChatMessage } from "../api/chat.api";
+import { postChatMessage, getChatMessages } from "../api/chat.api";
 
 const socket = io(Config.urls.server);
 
@@ -22,6 +22,28 @@ const Chat: React.FC<ChatProps> = () => {
   const [input, setInput] = useState("");
   const { playerHero } = useGameContext();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    // Load the chat messages posted in the last 24 hours
+    getChatMessages()
+      .then((chatMessages) => {
+        const promises = chatMessages
+          .filter((msg) => Date.now() - msg.timestamp < 24 * 60 * 60 * 1000)
+          .map((msg) =>
+            getHero(msg.heroId).then((hero) => ({
+              id: msg.id,
+              senderName: hero.getName(),
+              text: msg.text,
+              timestamp: msg.timestamp,
+            }))
+          );
+
+        Promise.all(promises).then((messages) => {
+          setMessages(messages);
+        });
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
   useEffect(() => {
     socket.on("chat-message-posted", async (msg: ChatMessageSchema) => {

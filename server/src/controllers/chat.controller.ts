@@ -2,18 +2,24 @@ import { Request, Response } from "express";
 import { database } from "../database";
 import { ChatMessageSchema } from "../../../shared/database.schemas";
 
-export function getMessages(req: Request, res: Response) {
-  database
-    .getData("/chat")
-    .then((chats) => {
-      res.status(200).json(chats);
-    })
-    .catch((error) => {
-      res.status(404).send(error);
-    });
+export function getChatMessages(req: Request, res: Response) {
+  database.exists("/chat").then((exists) => {
+    if (exists) {
+      database
+        .getData("/chat")
+        .then((chats) => {
+          res.status(200).json(chats);
+        })
+        .catch((error) => {
+          res.status(404).send(error);
+        });
+    } else {
+      res.status(200).json([]);
+    }
+  });
 }
 
-export function postMessage(req: Request, res: Response) {
+export function postChatMessage(req: Request, res: Response) {
   const chatMessage: ChatMessageSchema = req.body;
   database
     .push("/chat[]", chatMessage)
@@ -25,7 +31,7 @@ export function postMessage(req: Request, res: Response) {
     });
 }
 
-export function deleteMessages(req: Request, res: Response) {
+export function deleteChatMessages(req: Request, res: Response) {
   database
     .delete("/chat")
     .then(() => {

@@ -2,6 +2,16 @@ import axios from "axios";
 import Config from "../../../shared/config.json";
 import { ChatMessageSchema } from "../../../shared/database.schemas";
 
+export async function getChatMessages(): Promise<ChatMessageSchema[]> {
+  return axios.get(Config.urls.server + "/api/chat").then((response) => {
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch messages");
+    }
+  });
+}
+
 export async function postChatMessage(
   heroId: string,
   text: string
