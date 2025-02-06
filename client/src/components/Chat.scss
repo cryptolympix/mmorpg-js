@@ -25,19 +25,21 @@
   &__input {
     margin-top: 10px;
     display: flex;
+    height: $chat-input-height;
 
     input {
       flex: 1;
       background: red;
       @include border-style(1px, solid, $background-color-light, 3px);
-      @include input-style(auto, 40px);
+      @include input-style(auto, 100%);
     }
 
     button {
       margin-left: 5px;
       cursor: pointer;
       @include border-style(1px, solid, $background-color-light, 3px);
-      @include button-style(auto, 40px, $chat-send-button-background);
+      @include button-style(auto, 100%, $chat-send-button-background);
+      padding: 0 10px;
     }
   }
 }
