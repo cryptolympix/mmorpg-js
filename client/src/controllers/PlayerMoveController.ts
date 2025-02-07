@@ -15,7 +15,7 @@ export function usePlayerMoveController() {
   const handleKeyDown = (event: KeyboardEvent) => {
     pressedKeys.current.add(event.key);
     if (playerHero) {
-      playerHero.setWalking(true);
+      handleHeroMove();
     }
   };
 
@@ -26,7 +26,19 @@ export function usePlayerMoveController() {
   const handleKeyUp = (event: KeyboardEvent) => {
     pressedKeys.current.delete(event.key);
     if (playerHero) {
-      playerHero.setWalking(false);
+      handleHeroMove();
+    }
+  };
+
+  /**
+   * Handles the player's movement based on the active keys.
+   */
+  const handleHeroMove = () => {
+    if (playerHero) {
+      const isWalking = Array.from(pressedKeys.current).some((key) =>
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key)
+      );
+      playerHero.setWalking(isWalking);
     }
   };
 
